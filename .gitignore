@@ -1,0 +1,54 @@
+# Dependências do Node.js
+node_modules/
+
+# Configurações de Ambiente e Segredos
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Banco de Dados SQLite e arquivos temporários de dados
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Certificados SSL / TLS e Chaves Privadas Sensíveis
+certs/*.pem
+certs/*.key
+certs/*.crt
+certs/*.srl
+!certs/.gitkeep
+
+# Certificados de Clientes gerados dinamicamente
+client-certs/*
+!client-certs/.gitkeep
+
+# Chaves e certificados temporários gerados em utils
+utils/*.pem
+utils/*.key
+utils/*.csr
+utils/*.srl
+
+# Relatórios e arquivos de varredura/auditoria de segurança (OWASP ZAP)
+activescan.csv
+InfoDiscloserAlert.raw
+relatorio_owasp_zap.json
+
+# Logs do Node / NPM
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Pasta de arquivos e documentações internas temporárias
+ignore/
+
+# Arquivos do Sistema Operacional e IDEs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo

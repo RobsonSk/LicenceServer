@@ -1,0 +1,1521 @@
+<!-- Cabeçalho Principal -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+  <div>
+    <h1 style="font-size: 1.75rem; font-weight: 700;">Painel de Licenciamento</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">
+      Conectado como <strong id="loggedUser" style="color: var(--accent-blue);">admin</strong>
+      <span id="loggedRoleBadge" style="margin-left: 8px;"></span>
+    </p>
+  </div>
+  <div style="display: flex; gap: 10px;">
+    <button onclick="openPasswordModal()" class="btn btn-secondary">
+      🔑 Meu Perfil / Senha / MFA
+    </button>
+    <button onclick="logoutAdmin()" class="btn btn-danger">
+      Sair
+    </button>
+  </div>
+</div>
+
+<div id="toast" style="display: none; position: fixed; top: 20px; right: 20px; background: var(--accent-green); color: #000; padding: 12px 20px; border-radius: 8px; font-weight: 600; box-shadow: var(--shadow); z-index: 1000;">
+</div>
+
+<!-- Barra de Navegação por Abas (Tabs) -->
+<div style="display: flex; gap: 8px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0px;">
+  <button id="tabBtnLicenses" onclick="switchTab('licenses')" style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--accent-blue); border-bottom: 2px solid var(--accent-blue); cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+    📜 Licenças
+  </button>
+  <button id="tabBtnSecurity" onclick="switchTab('security')" style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+    🛡️ Segurança & IPs Bloqueados
+  </button>
+  <button id="tabBtnUsers" onclick="switchTab('users')" style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+    👥 Gestão de Usuários
+  </button>
+  <button id="tabBtnSettings" onclick="switchTab('settings')" style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+    ⚙️ Configurações Globais
+  </button>
+</div>
+
+<!-- =================================================================== -->
+<!-- ABA 1: GERENCIAMENTO DE LICENÇAS (Principal) -->
+<!-- =================================================================== -->
+<div id="tabContentLicenses">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <div>
+      <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Licenças Cadastradas</h2>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Lista de licenças ativas, expiradas e revogadas com UUIDs e X-API-Keys de conexão.</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button onclick="fetchLicenses()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">
+        🔄 Atualizar Licenças
+      </button>
+      <button id="btnAddLicense" onclick="openAddModal()" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">
+        + Nova Licença
+      </button>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 0; overflow: hidden;">
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+        <thead>
+          <tr style="background-color: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+            <th style="padding: 1rem;">Nome / Identificação</th>
+            <th style="padding: 1rem;">UUID de Validação</th>
+            <th style="padding: 1rem;">X-API-Key (Cabeçalho)</th>
+            <th style="padding: 1rem;">Hardware (HWID)</th>
+            <th style="padding: 1rem;">Status</th>
+            <th style="padding: 1rem;">Validade</th>
+            <th style="padding: 1rem;">Cadastrado por</th>
+            <th style="padding: 1rem; text-align: right;">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="licensesTableBody">
+          <tr>
+            <td colspan="8" style="padding: 2rem; text-align: center; color: var(--text-muted);">Carregando licenças...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- =================================================================== -->
+<!-- ABA 2: SEGURANÇA E BLOQUEIO DE IPS (Admin e Operador) -->
+<!-- =================================================================== -->
+<div id="tabContentSecurity" style="display: none;">
+  <!-- Seção de Logs de Acesso Não Autorizado / Segurança -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <div>
+      <h2 style="font-size: 1.25rem; font-weight: 700; color: #ef4444; display: flex; align-items: center; gap: 8px;">
+        🛡️ Tentativas de Acesso Negado / Ataques Suspeitos
+      </h2>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Histórico detalhado de requisições rejeitadas com origem identificada (🌐 Painel Web vs 🔑 Validação API).</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button onclick="fetchAccessLogs()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">🔄 Atualizar Logs</button>
+      <button id="btnClearLogs" onclick="clearAccessLogs()" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;">🗑️ Limpar Histórico</button>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 2.5rem;">
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+        <thead>
+          <tr style="background-color: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+            <th style="padding: 0.75rem 1rem;">Data / Hora</th>
+            <th style="padding: 0.75rem 1rem;">IP do Cliente</th>
+            <th style="padding: 0.75rem 1rem;">UUID Tentado</th>
+            <th style="padding: 0.75rem 1rem;">X-API-Key Usada</th>
+            <th style="padding: 0.75rem 1rem;">Origem & Motivo do Bloqueio</th>
+            <th style="padding: 0.75rem 1rem;">User Agent</th>
+            <th style="padding: 0.75rem 1rem; text-align: right;">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="logsTableBody">
+          <tr>
+            <td colspan="7" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Carregando logs de auditoria...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Barra de Paginação para Logs (5 itens por página) -->
+    <div id="logsPagination" style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; border-top: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-muted); background: rgba(255,255,255,0.01);">
+      <span id="logsPageInfo">Mostrando 0-0 de 0 tentativas</span>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <button id="btnPrevLogs" onclick="changeLogsPage(-1)" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;">← Anterior</button>
+        <span id="logsPageNum" style="font-weight: 600; color: var(--accent-blue);">Página 1 de 1</span>
+        <button id="btnNextLogs" onclick="changeLogsPage(1)" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;">Próximo →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seção de Blacklist de IPs Bloqueados -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <div>
+      <h2 style="font-size: 1.25rem; font-weight: 700; color: #f59e0b; display: flex; align-items: center; gap: 8px;">
+        🚫 Blacklist e Histórico de IPs Bloqueados
+      </h2>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Registro de bloqueios e desbloqueios com auditoria (Quem bloqueou/desbloqueou e data).</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button onclick="fetchBlockedIps()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">🔄 Atualizar Blacklist</button>
+      <button onclick="openBlockIpModal()" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">+ Bloquear IP Manualmente</button>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 2rem;">
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+        <thead>
+          <tr style="background-color: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+            <th style="padding: 0.75rem 1rem;">Endereço IP</th>
+            <th style="padding: 0.75rem 1rem;">Status</th>
+            <th style="padding: 0.75rem 1rem;">Motivo do Bloqueio</th>
+            <th style="padding: 0.75rem 1rem;">Bloqueado por / Data</th>
+            <th style="padding: 0.75rem 1rem;">Desbloqueado por / Data</th>
+            <th style="padding: 0.75rem 1rem; text-align: right;">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="blockedIpsTableBody">
+          <tr>
+            <td colspan="6" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Carregando IPs bloqueados...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- =================================================================== -->
+<!-- ABA 3: GESTÃO DE USUÁRIOS (Exclusivo para Admin) -->
+<!-- =================================================================== -->
+<div id="tabContentUsers" style="display: none;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <div>
+      <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--accent-blue); display: flex; align-items: center; gap: 8px;">
+        👥 Gestão de Usuários e Permissões (RBAC)
+      </h2>
+      <p style="color: var(--text-muted); font-size: 0.85rem;">Gerencie os acessos de Administradores, Operadores e Usuários de Consulta do sistema.</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button onclick="fetchUsers()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">🔄 Atualizar Usuários</button>
+      <button onclick="openUserModal()" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">+ Novo Usuário</button>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 2rem;">
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+        <thead>
+          <tr style="background-color: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+            <th style="padding: 0.75rem 1rem;">Nome de Visualização</th>
+            <th style="padding: 0.75rem 1rem;">E-mail / Login</th>
+            <th style="padding: 0.75rem 1rem;">Função / Perfil (Role)</th>
+            <th style="padding: 0.75rem 1rem;">Status MFA (2FA)</th>
+            <th style="padding: 0.75rem 1rem;">Data de Cadastro</th>
+            <th style="padding: 0.75rem 1rem; text-align: right;">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="usersTableBody">
+          <tr>
+            <td colspan="6" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Carregando usuários...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- =================================================================== -->
+<!-- ABA 4: CONFIGURAÇÕES GLOBAIS DO SERVIÇO (Exclusivo para Admin) -->
+<!-- =================================================================== -->
+<div id="tabContentSettings" style="display: none;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <div>
+      <h2 style="font-size: 1.3rem; font-weight: 700; color: #c084fc; display: flex; align-items: center; gap: 8px;">
+        ⚙️ Configurações e Políticas Globais do Serviço
+      </h2>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Defina diretrizes globais de segurança e autenticação aplicadas a todo o servidor.</p>
+    </div>
+    <div>
+      <button onclick="fetchSystemSettings()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">🔄 Recarregar Configurações</button>
+    </div>
+  </div>
+
+  <div class="card" style="max-width: 680px; margin-bottom: 2rem;">
+    <form id="systemSettingsForm">
+      <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+        🔐 Políticas Globais de Autenticação e MFA (2FA)
+      </h3>
+
+      <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.2); padding: 1.25rem; border-radius: 10px; margin-bottom: 1.5rem;">
+        <div style="display: flex; align-items: flex-start; gap: 12px;">
+          <input type="checkbox" id="settingRequireMfaAll" style="width: 20px; height: 20px; cursor: pointer; margin-top: 2px;">
+          <div>
+            <label for="settingRequireMfaAll" style="cursor: pointer; font-size: 0.95rem; font-weight: 700; color: #c084fc; margin-bottom: 4px; display: block;">
+              Tornar Autenticação em Duas Etapas (MFA) OBRIGATÓRIA para todos os usuários
+            </label>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0; line-height: 1.4;">
+              Quando esta política estiver ativada, qualquer usuário (Administrador, Operador ou Usuário de Consulta) sem o MFA ativado em seu perfil será <strong>bloqueado no login</strong> até que regularize sua conta com a autenticação de duas etapas.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end;">
+        <button type="submit" class="btn btn-primary" style="padding: 8px 18px;">
+          💾 Salvar Configurações Globais
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- =================================================================== -->
+<!-- MODAIS DO SISTEMA (com Botão X de Fechamento no Topo) -->
+<!-- =================================================================== -->
+
+<!-- Modal para Adicionar / Editar Licença -->
+<div id="licenseModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
+  <div class="card" style="width: 100%; max-width: 480px; margin: 0 1rem; position: relative;">
+    <button type="button" onclick="closeModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
+    <h3 id="modalTitle" style="margin-bottom: 1.25rem;">Nova Licença</h3>
+    <form id="licenseForm">
+      <input type="hidden" id="editUuid">
+      
+      <div class="form-group">
+        <label>Nome / Identificação do Cliente</label>
+        <input type="text" id="company_name" class="form-control" placeholder="Ex: Cliente Empresa XYZ" required>
+      </div>
+
+      <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px; margin-bottom: 1rem;">
+        <input type="checkbox" id="is_lifetime" style="width: 18px; height: 18px; cursor: pointer;" onchange="toggleLifetime(this.checked)">
+        <label for="is_lifetime" style="cursor: pointer; margin: 0; font-size: 0.95rem; color: var(--accent-blue); font-weight: 600;">
+          ♾️ Válido para Sempre (Sem Expiração)
+        </label>
+      </div>
+
+      <div class="form-group" id="validUntilGroup">
+        <label>Data e Hora de Validade</label>
+        <input type="datetime-local" id="valid_until" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label>Status da Licença</label>
+        <select id="status" class="form-control">
+          <option value="active">Ativo (Permitir acesso)</option>
+          <option value="revoked">Desativado / Revogado (Bloquear acesso)</option>
+        </select>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem;">
+        <button type="button" onclick="closeModal()" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Salvar Licença</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal para Bloquear IP Manualmente -->
+<div id="blockIpModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
+  <div class="card" style="width: 100%; max-width: 440px; margin: 0 1rem; position: relative;">
+    <button type="button" onclick="closeBlockIpModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
+    <h3 style="margin-bottom: 1.25rem; color: #ef4444; display: flex; align-items: center; gap: 8px;">🚫 Bloquear Endereço IP</h3>
+    <form id="blockIpForm">
+      <div class="form-group">
+        <label>Endereço IP</label>
+        <input type="text" id="blockIpInput" class="form-control" placeholder="Ex: 198.51.100.45" required>
+      </div>
+      <div class="form-group">
+        <label>Motivo do Bloqueio</label>
+        <input type="text" id="blockIpReasonInput" class="form-control" placeholder="Ex: Tentativas de ataque ou força bruta" required>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem;">
+        <button type="button" onclick="closeBlockIpModal()" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" class="btn btn-danger">Confirmar Bloqueio</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal de Perfil: Alterar Senha & Gerenciar MFA -->
+<div id="passwordModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
+  <div class="card" style="width: 100%; max-width: 480px; margin: 0 1rem; position: relative;">
+    <button type="button" onclick="closePasswordModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
+    <h3 style="margin-bottom: 1.25rem;">🔑 Meu Perfil - Senha & MFA</h3>
+    <form id="passwordForm">
+      <div class="form-group">
+        <label>Senha Atual</label>
+        <input type="password" id="currentPassword" class="form-control" placeholder="••••••••" required>
+      </div>
+      <div class="form-group">
+        <label>Nova Senha</label>
+        <input type="password" id="newPassword" class="form-control" placeholder="Digite a nova senha" required oninput="onPasswordInputLive()">
+      </div>
+      <div class="form-group" style="margin-bottom: 0.75rem;">
+        <label>Confirmação da Nova Senha</label>
+        <input type="password" id="confirmPassword" class="form-control" placeholder="Repita a nova senha" required oninput="onPasswordInputLive()">
+      </div>
+
+      <!-- Requisitos Dinâmicos em Tempo Real -->
+      <div style="margin-bottom: 1.25rem;">
+        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-bottom: 6px;">Requisitos da Senha:</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.75rem;">
+          <span id="pwd-len" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 8+ caracteres</span>
+          <span id="pwd-upper" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Maiúscula</span>
+          <span id="pwd-lower" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Minúscula</span>
+          <span id="pwd-digit" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Número</span>
+          <span id="pwd-special" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Especial (@#$!)</span>
+        </div>
+        <div id="pwd-match" style="margin-top: 8px; font-size: 0.8rem; font-weight: 600; color: #ef4444; display: none;"></div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 1.5rem;">
+        <button type="button" onclick="closePasswordModal()" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Atualizar Senha</button>
+      </div>
+    </form>
+
+    <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+
+    <!-- Seção de Gerenciamento de MFA (2FA TOTP) no Perfil -->
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">📱 Autenticação em Duas Etapas (MFA)</h4>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">Proteja seu acesso com Google Authenticator ou Authy.</p>
+      </div>
+      <div id="mfaProfileBtnContainer">
+        <span style="font-size: 0.75rem; color: var(--text-muted);">Carregando status...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Configurar MFA (QR Code) -->
+<div id="mfaSetupModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000;">
+  <div class="card" style="width: 100%; max-width: 440px; margin: 0 1rem; text-align: center; position: relative;">
+    <button type="button" onclick="closeMfaSetupModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
+    <h3 style="margin-bottom: 1rem; color: var(--accent-blue);">📱 Configurar Autenticação MFA</h3>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">1. Abra o aplicativo <strong>Google Authenticator</strong> ou <strong>Authy</strong> no celular e escaneie o QR Code abaixo:</p>
+    
+    <div style="background: #fff; padding: 12px; border-radius: 12px; display: inline-block; margin-bottom: 1rem;">
+      <img id="mfaQrCodeImg" src="" alt="MFA QR Code" style="width: 180px; height: 180px; display: block;">
+    </div>
+
+    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.25rem; word-break: break-all;">
+      Chave Manual: <code id="mfaSecretText" style="color: var(--accent-blue); font-family: monospace; font-weight: 700;"></code>
+    </div>
+
+    <form id="mfaEnableForm">
+      <div class="form-group" style="text-align: left;">
+        <label>2. Digite o código de 6 dígitos gerado no aplicativo para ativar:</label>
+        <input type="text" id="mfaConfirmCode" class="form-control" placeholder="123456" maxlength="6" pattern="[0-9]{6}" required style="text-align: center; letter-spacing: 4px; font-size: 1.2rem; font-weight: 700; font-family: monospace;">
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.25rem;">
+        <button type="button" onclick="closeMfaSetupModal()" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Ativar MFA Agora</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal para Cadastrar Usuário (Apenas Admin) -->
+<div id="userModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
+  <div class="card" style="width: 100%; max-width: 460px; margin: 0 1rem; position: relative;">
+    <button type="button" onclick="closeUserModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
+    <h3 style="margin-bottom: 1.25rem;">👥 Cadastrar Novo Usuário</h3>
+    <form id="userForm">
+      <div class="form-group">
+        <label>Nome Completo / Visualização</label>
+        <input type="text" id="newName" class="form-control" placeholder="Ex: João Silva" required>
+      </div>
+      <div class="form-group">
+        <label>E-mail de Login</label>
+        <input type="email" id="newEmail" class="form-control" placeholder="joao.silva@empresa.com" required>
+      </div>
+      <div class="form-group">
+        <label>Função / Perfil (Role)</label>
+        <select id="newUserRole" class="form-control">
+          <option value="user">Usuário (Somente Leitura - Consulta Licenças)</option>
+          <option value="operator">Operador (Criar/Editar Licenças e Gerenciar IPs)</option>
+          <option value="admin">Administrador (Acesso Total + Gestão de Usuários)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Senha de Acesso</label>
+        <input type="password" id="newUserPassword" class="form-control" placeholder="••••••••" required oninput="onUserPasswordInputLive()">
+      </div>
+      <div class="form-group" style="margin-bottom: 0.75rem;">
+        <label>Confirmar Senha</label>
+        <input type="password" id="newUserConfirmPassword" class="form-control" placeholder="••••••••" required oninput="onUserPasswordInputLive()">
+      </div>
+
+      <!-- Requisitos Dinâmicos em Tempo Real -->
+      <div style="margin-bottom: 1.25rem;">
+        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-bottom: 6px;">Requisitos da Senha:</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.75rem;">
+          <span id="usr-pwd-len" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 8+ caracteres</span>
+          <span id="usr-pwd-upper" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Maiúscula</span>
+          <span id="usr-pwd-lower" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Minúscula</span>
+          <span id="usr-pwd-digit" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Número</span>
+          <span id="usr-pwd-special" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Especial (@#$!)</span>
+        </div>
+        <div id="usr-pwd-match" style="margin-top: 8px; font-size: 0.8rem; font-weight: 600; color: #ef4444; display: none;"></div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" onclick="closeUserModal()" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Salvar Usuário</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal para Editar Usuário / Resetar Senha / Desativar MFA (Apenas Admin) -->
+<div id="editUserModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
+  <div class="card" style="width: 100%; max-width: 460px; margin: 0 1rem; position: relative;">
+    <button type="button" onclick="closeEditUserModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
+    <h3 style="margin-bottom: 1.25rem;">✏️ Editar Usuário</h3>
+    <form id="editUserForm">
+      <input type="hidden" id="editUserId">
+      <div class="form-group">
+        <label>Nome Completo / Visualização</label>
+        <input type="text" id="editUserName" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>E-mail de Login</label>
+        <input type="email" id="editUserEmail" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>Função / Perfil (Role)</label>
+        <select id="editUserRole" class="form-control">
+          <option value="user">Usuário (Somente Leitura - Consulta Licenças)</option>
+          <option value="operator">Operador (Criar/Editar Licenças e Gerenciar IPs)</option>
+          <option value="admin">Administrador (Acesso Total + Gestão de Usuários)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nova Senha (Opcional)</label>
+        <input type="password" id="editUserPassword" class="form-control" placeholder="Deixe em branco para manter a senha atual">
+      </div>
+
+      <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px; margin-top: 1rem; margin-bottom: 1rem;">
+        <input type="checkbox" id="editResetMfa" style="width: 18px; height: 18px; cursor: pointer;">
+        <label for="editResetMfa" style="cursor: pointer; margin: 0; font-size: 0.85rem; color: #ef4444; font-weight: 600;">
+          🔓 Desativar / Resetar Autenticação MFA deste usuário
+        </label>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem;">
+        <button type="button" onclick="closeEditUserModal()" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const token = localStorage.getItem('admin_token');
+  const loggedUsername = localStorage.getItem('admin_username') || 'admin';
+  const loggedName = localStorage.getItem('admin_name') || loggedUsername;
+  const loggedRole = localStorage.getItem('admin_role') || 'admin';
+
+  let currentGeneratedMfaSecret = null;
+  let allAccessLogs = [];
+  let logsPage = 1;
+  const LOGS_PER_PAGE = 5;
+
+  if (!token) {
+    window.location.href = '/admin/login';
+  } else {
+    document.getElementById('loggedUser').textContent = loggedName;
+    renderRoleBadge(loggedRole);
+    applyRolePermissions(loggedRole);
+  }
+
+  /* Lógica de Troca de Abas (Tabs) */
+  function switchTab(tabName) {
+    const tabLicenses = document.getElementById('tabContentLicenses');
+    const tabSecurity = document.getElementById('tabContentSecurity');
+    const tabUsers = document.getElementById('tabContentUsers');
+    const tabSettings = document.getElementById('tabContentSettings');
+
+    const btnLicenses = document.getElementById('tabBtnLicenses');
+    const btnSecurity = document.getElementById('tabBtnSecurity');
+    const btnUsers = document.getElementById('tabBtnUsers');
+    const btnSettings = document.getElementById('tabBtnSettings');
+
+    // Desativar todas as abas
+    [btnLicenses, btnSecurity, btnUsers, btnSettings].forEach(btn => {
+      if (btn) {
+        btn.style.color = 'var(--text-muted)';
+        btn.style.borderBottomColor = 'transparent';
+      }
+    });
+
+    if (tabLicenses) tabLicenses.style.display = 'none';
+    if (tabSecurity) tabSecurity.style.display = 'none';
+    if (tabUsers) tabUsers.style.display = 'none';
+    if (tabSettings) tabSettings.style.display = 'none';
+
+    // Ativar a aba selecionada
+    if (tabName === 'licenses') {
+      if (tabLicenses) tabLicenses.style.display = 'block';
+      if (btnLicenses) {
+        btnLicenses.style.color = 'var(--accent-blue)';
+        btnLicenses.style.borderBottomColor = 'var(--accent-blue)';
+      }
+      fetchLicenses();
+    } else if (tabName === 'security') {
+      if (tabSecurity) tabSecurity.style.display = 'block';
+      if (btnSecurity) {
+        btnSecurity.style.color = 'var(--accent-blue)';
+        btnSecurity.style.borderBottomColor = 'var(--accent-blue)';
+      }
+      fetchAccessLogs();
+      fetchBlockedIps();
+    } else if (tabName === 'users') {
+      if (tabUsers) tabUsers.style.display = 'block';
+      if (btnUsers) {
+        btnUsers.style.color = 'var(--accent-blue)';
+        btnUsers.style.borderBottomColor = 'var(--accent-blue)';
+      }
+      fetchUsers();
+    } else if (tabName === 'settings') {
+      if (tabSettings) tabSettings.style.display = 'block';
+      if (btnSettings) {
+        btnSettings.style.color = '#c084fc';
+        btnSettings.style.borderBottomColor = '#c084fc';
+      }
+      fetchSystemSettings();
+    }
+  }
+
+  function renderRoleBadge(role) {
+    const badgeSpan = document.getElementById('loggedRoleBadge');
+    if (role === 'admin') {
+      badgeSpan.innerHTML = '<span style="background: rgba(168, 85, 247, 0.2); color: #c084fc; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem;">👑 Administrador</span>';
+    } else if (role === 'operator') {
+      badgeSpan.innerHTML = '<span style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem;">🛠️ Operador</span>';
+    } else {
+      badgeSpan.innerHTML = '<span style="background: rgba(156, 163, 175, 0.2); color: #9ca3af; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem;">👤 Usuário (Leitura)</span>';
+    }
+  }
+
+  function applyRolePermissions(role) {
+    const btnAddLicense = document.getElementById('btnAddLicense');
+    const tabBtnSecurity = document.getElementById('tabBtnSecurity');
+    const tabBtnUsers = document.getElementById('tabBtnUsers');
+    const tabBtnSettings = document.getElementById('tabBtnSettings');
+    const btnClearLogs = document.getElementById('btnClearLogs');
+
+    if (role === 'admin') {
+      if (tabBtnSecurity) tabBtnSecurity.style.display = 'flex';
+      if (tabBtnUsers) tabBtnUsers.style.display = 'flex';
+      if (tabBtnSettings) tabBtnSettings.style.display = 'flex';
+      if (btnAddLicense) btnAddLicense.style.display = 'inline-block';
+      if (btnClearLogs) btnClearLogs.style.display = 'inline-block';
+    } else if (role === 'operator') {
+      if (tabBtnSecurity) tabBtnSecurity.style.display = 'flex';
+      if (tabBtnUsers) tabBtnUsers.style.display = 'none';
+      if (tabBtnSettings) tabBtnSettings.style.display = 'none';
+      if (btnAddLicense) btnAddLicense.style.display = 'inline-block';
+      if (btnClearLogs) btnClearLogs.style.display = 'none';
+    } else {
+      // Perfil 'user' (Somente Leitura)
+      if (tabBtnSecurity) tabBtnSecurity.style.display = 'none';
+      if (tabBtnUsers) tabBtnUsers.style.display = 'none';
+      if (tabBtnSettings) tabBtnSettings.style.display = 'none';
+      if (btnAddLicense) btnAddLicense.style.display = 'none';
+    }
+
+    switchTab('licenses');
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 3000);
+  }
+
+  function logoutAdmin() {
+    localStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_username');
+    localStorage.removeItem('admin_name');
+    localStorage.removeItem('admin_role');
+    window.location.href = '/admin/login';
+  }
+
+  function copyToClipboard(text, successMsg = 'Copiado!') {
+    if (!text) return;
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(successMsg);
+      }).catch(() => {
+        fallbackCopyText(text, successMsg);
+      });
+    } else {
+      fallbackCopyText(text, successMsg);
+    }
+  }
+
+  function fallbackCopyText(text, successMsg = 'Copiado!') {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
+        showToast(successMsg);
+      } else {
+        prompt('Copie manualmente:', text);
+      }
+    } catch (err) {
+      prompt('Copie manualmente:', text);
+    }
+    document.body.removeChild(textArea);
+  }
+
+  function toggleLifetime(checked) {
+    const group = document.getElementById('validUntilGroup');
+    const input = document.getElementById('valid_until');
+    if (checked) {
+      group.style.opacity = '0.5';
+      input.disabled = true;
+      input.removeAttribute('required');
+    } else {
+      group.style.opacity = '1';
+      input.disabled = false;
+      input.setAttribute('required', 'required');
+    }
+  }
+
+  /* Validação Visual de Senha Forte em Tempo Real */
+  function onPasswordInputLive() {
+    const pwd = document.getElementById('newPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    updatePasswordChecklist('pwd-', pwd, confirm);
+  }
+
+  function onUserPasswordInputLive() {
+    const pwd = document.getElementById('newUserPassword').value;
+    const confirm = document.getElementById('newUserConfirmPassword').value;
+    updatePasswordChecklist('usr-pwd-', pwd, confirm);
+  }
+
+  function updatePasswordChecklist(prefix, pwd, confirmVal) {
+    updateBadge(`${prefix}len`, pwd.length >= 8, '8+ caracteres');
+    updateBadge(`${prefix}upper`, /[A-Z]/.test(pwd), 'Maiúscula');
+    updateBadge(`${prefix}lower`, /[a-z]/.test(pwd), 'Minúscula');
+    updateBadge(`${prefix}digit`, /[0-9]/.test(pwd), 'Número');
+    updateBadge(`${prefix}special`, /[@$!%*?&_#^()\-+=]/.test(pwd), 'Especial (@#$!)');
+
+    const matchEl = document.getElementById(`${prefix}match`);
+    if (matchEl) {
+      if (!confirmVal && !pwd) {
+        matchEl.style.display = 'none';
+      } else if (pwd === confirmVal && pwd !== '') {
+        matchEl.style.display = 'block';
+        matchEl.style.color = 'var(--accent-green)';
+        matchEl.textContent = '🟢 Senhas coincidem';
+      } else {
+        matchEl.style.display = 'block';
+        matchEl.style.color = '#ef4444';
+        matchEl.textContent = '🔴 As senhas não coincidem';
+      }
+    }
+  }
+
+  function updateBadge(id, isOk, label) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (isOk) {
+      el.style.background = 'rgba(34, 197, 94, 0.15)';
+      el.style.color = 'var(--accent-green)';
+      el.textContent = '🟢 ' + label;
+    } else {
+      el.style.background = 'rgba(239, 68, 68, 0.15)';
+      el.style.color = '#ef4444';
+      el.textContent = '🔴 ' + label;
+    }
+  }
+
+  /* Listagem de Usuários com Status MFA */
+  async function fetchUsers() {
+    if (loggedRole !== 'admin') return;
+    try {
+      const res = await fetch('/api/admin/users', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      const tbody = document.getElementById('usersTableBody');
+      if (!data.users || data.users.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Nenhum usuário cadastrado.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = data.users.map(u => {
+        let rBadge = '<span style="color: #9ca3af;">👤 Usuário</span>';
+        if (u.role === 'admin') rBadge = '<span style="color: #c084fc; font-weight: 700;">👑 Admin</span>';
+        if (u.role === 'operator') rBadge = '<span style="color: #60a5fa; font-weight: 700;">🛠️ Operador</span>';
+
+        const displayName = u.name || u.username;
+        const userEmail = u.email || u.username;
+
+        let mfaBadge = Number(u.mfa_enabled) === 1 
+          ? '<span style="background: rgba(34, 197, 94, 0.15); color: var(--accent-green); padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">🟢 MFA Ativo</span>'
+          : '<span style="background: rgba(156, 163, 175, 0.15); color: var(--text-muted); padding: 3px 8px; border-radius: 6px; font-size: 0.75rem;">⚪ Inativo</span>';
+
+        return `
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 0.75rem 1rem;">
+              <strong style="color: var(--text-main); font-size: 0.9rem;">${escapeHtml(displayName)}</strong>
+            </td>
+            <td style="padding: 0.75rem 1rem;">
+              <code style="color: var(--accent-blue); font-family: monospace; font-size: 0.85rem;">${escapeHtml(userEmail)}</code>
+            </td>
+            <td style="padding: 0.75rem 1rem;">${rBadge}</td>
+            <td style="padding: 0.75rem 1rem;">${mfaBadge}</td>
+            <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.8rem;">${new Date(u.created_at).toLocaleString('pt-BR')}</td>
+            <td style="padding: 0.75rem 1rem; text-align: right;">
+              <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px;">
+                <button onclick="openEditUserModal(${u.id}, '${escapeHtml(displayName)}', '${escapeHtml(userEmail)}', '${u.role}')" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;">Editar</button>
+                ${u.username !== 'admin' ? `<button onclick="deleteUserAction(${u.id}, '${escapeHtml(displayName)}')" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;">Excluir</button>` : '<span style="color: var(--text-muted); font-size: 0.75rem; margin-left: 4px;">Padrão</span>'}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    } catch (err) {
+      console.error('Erro ao buscar usuários:', err);
+    }
+  }
+
+  function openUserModal() {
+    document.getElementById('newName').value = '';
+    document.getElementById('newEmail').value = '';
+    document.getElementById('newUserPassword').value = '';
+    document.getElementById('newUserConfirmPassword').value = '';
+    document.getElementById('newUserRole').value = 'user';
+    onUserPasswordInputLive();
+    document.getElementById('userModal').style.display = 'flex';
+  }
+
+  function closeUserModal() {
+    document.getElementById('userModal').style.display = 'none';
+  }
+
+  function openEditUserModal(id, name, email, role) {
+    document.getElementById('editUserId').value = id;
+    document.getElementById('editUserName').value = name;
+    document.getElementById('editUserEmail').value = email;
+    document.getElementById('editUserRole').value = role || 'user';
+    document.getElementById('editUserPassword').value = '';
+    document.getElementById('editResetMfa').checked = false;
+    document.getElementById('editUserModal').style.display = 'flex';
+  }
+
+  function closeEditUserModal() {
+    document.getElementById('editUserModal').style.display = 'none';
+  }
+
+  document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('editUserId').value;
+    const name = document.getElementById('editUserName').value;
+    const email = document.getElementById('editUserEmail').value;
+    const role = document.getElementById('editUserRole').value;
+    const newPassword = document.getElementById('editUserPassword').value;
+    const resetMfa = document.getElementById('editResetMfa').checked;
+
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ name, email, role, newPassword, resetMfa })
+      });
+      const data = await res.json();
+      if (data.success) {
+        closeEditUserModal();
+        showToast('Usuário atualizado com sucesso!');
+        fetchUsers();
+      } else {
+        alert('Erro: ' + (data.error || 'Não foi possível atualizar o usuário.'));
+      }
+    } catch (err) {
+      alert('Erro ao atualizar usuário.');
+    }
+  });
+
+  document.getElementById('userForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('newName').value;
+    const email = document.getElementById('newEmail').value;
+    const password = document.getElementById('newUserPassword').value;
+    const confirmPassword = document.getElementById('newUserConfirmPassword').value;
+    const role = document.getElementById('newUserRole').value;
+
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ name, email, password, confirmPassword, role })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        closeUserModal();
+        showToast('Novo usuário cadastrado com sucesso!');
+        fetchUsers();
+      } else {
+        alert('Erro: ' + (data.error || 'Não foi possível cadastrar o usuário.'));
+      }
+    } catch (err) {
+      alert('Erro ao cadastrar usuário.');
+    }
+  });
+
+  async function deleteUserAction(id, name) {
+    if (!confirm(`Tem certeza que deseja excluir o usuário "${name}"?`)) return;
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Usuário excluído!');
+        fetchUsers();
+      } else {
+        alert('Erro: ' + data.error);
+      }
+    } catch (err) {
+      alert('Erro ao excluir usuário.');
+    }
+  }
+
+  /* Lógica para Configurações Globais do Serviço */
+  async function fetchSystemSettings() {
+    if (loggedRole !== 'admin') return;
+    try {
+      const res = await fetch('/api/admin/settings', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success && data.settings) {
+        document.getElementById('settingRequireMfaAll').checked = !!data.settings.require_mfa_all;
+      }
+    } catch (err) {
+      console.error('Erro ao buscar configurações globais:', err);
+    }
+  }
+
+  document.getElementById('systemSettingsForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (loggedRole !== 'admin') return;
+    const require_mfa_all = document.getElementById('settingRequireMfaAll').checked;
+
+    try {
+      const res = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ require_mfa_all })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message || 'Configurações salvas!');
+        fetchSystemSettings();
+      } else {
+        alert('Erro ao salvar configurações: ' + data.error);
+      }
+    } catch (err) {
+      alert('Erro ao salvar configurações globais.');
+    }
+  });
+
+  /* Lógica para Configurar e Gerenciar MFA no Perfil */
+  async function checkMfaStatus() {
+    const container = document.getElementById('mfaProfileBtnContainer');
+    try {
+      const res = await fetch('/api/admin/mfa/status', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (data.mfaEnabled) {
+          container.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="color: var(--accent-green); font-weight: 600; font-size: 0.8rem;">🟢 Ativo</span>
+              <button type="button" onclick="disableMfaAction()" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;">Desativar MFA</button>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <button type="button" onclick="startMfaSetup()" class="btn btn-primary" style="padding: 4px 10px; font-size: 0.8rem;">+ Configurar MFA</button>
+          `;
+        }
+      }
+    } catch (err) {
+      container.innerHTML = '<span style="color: #ef4444; font-size: 0.75rem;">Erro ao verificar MFA</span>';
+    }
+  }
+
+  async function startMfaSetup() {
+    try {
+      const res = await fetch('/api/admin/mfa/setup', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        currentGeneratedMfaSecret = data.secret;
+        document.getElementById('mfaQrCodeImg').src = data.qrCode;
+        document.getElementById('mfaSecretText').textContent = data.secret;
+        document.getElementById('mfaConfirmCode').value = '';
+        document.getElementById('mfaSetupModal').style.display = 'flex';
+      } else {
+        alert('Erro ao iniciar configuração do MFA: ' + data.error);
+      }
+    } catch (err) {
+      alert('Erro ao conectar com o servidor para MFA.');
+    }
+  }
+
+  function closeMfaSetupModal() {
+    document.getElementById('mfaSetupModal').style.display = 'none';
+  }
+
+  document.getElementById('mfaEnableForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const tokenVal = document.getElementById('mfaConfirmCode').value.trim();
+    if (!tokenVal || !currentGeneratedMfaSecret) return;
+
+    try {
+      const res = await fetch('/api/admin/mfa/enable', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ secret: currentGeneratedMfaSecret, token: tokenVal })
+      });
+      const data = await res.json();
+      if (data.success) {
+        closeMfaSetupModal();
+        showToast('MFA Ativado com sucesso!');
+        checkMfaStatus();
+        fetchUsers();
+      } else {
+        alert('Erro: ' + (data.error || 'Código incorreto.'));
+      }
+    } catch (err) {
+      alert('Erro ao ativar MFA.');
+    }
+  });
+
+  async function disableMfaAction() {
+    const pwd = prompt('Por segurança, digite a sua senha atual para confirmar a desativação do MFA:');
+    if (!pwd) return;
+
+    try {
+      const res = await fetch('/api/admin/mfa/disable', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ currentPassword: pwd })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('MFA Desativado com sucesso.');
+        checkMfaStatus();
+        fetchUsers();
+      } else {
+        alert('Erro: ' + data.error);
+      }
+    } catch (err) {
+      alert('Erro ao desativar MFA.');
+    }
+  }
+
+  function openPasswordModal() {
+    document.getElementById('currentPassword').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+    onPasswordInputLive();
+    checkMfaStatus();
+    document.getElementById('passwordModal').style.display = 'flex';
+  }
+
+  function closePasswordModal() {
+    document.getElementById('passwordModal').style.display = 'none';
+  }
+
+  /* Buscar e Renderizar Licenças com Botão de Cópia e Reset Abaixo */
+  async function fetchLicenses() {
+    try {
+      const res = await fetch('/api/admin/licenses', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        logoutAdmin();
+        return;
+      }
+
+      const data = await res.json();
+      const tbody = document.getElementById('licensesTableBody');
+
+      if (!data.licenses || data.licenses.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="padding: 2rem; text-align: center; color: var(--text-muted);">Nenhuma licença cadastrada.</td></tr>`;
+        return;
+      }
+
+      const now = new Date();
+      tbody.innerHTML = data.licenses.map(lic => {
+        const isLifetime = lic.is_lifetime === 1 || lic.valid_until === 'LIFETIME';
+        const validUntil = isLifetime ? null : new Date(lic.valid_until);
+        const isExpired = !isLifetime && validUntil && validUntil <= now;
+
+        let statusBadge = '<span style="background: rgba(34, 197, 94, 0.15); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Ativo</span>';
+        if (lic.status === 'revoked') {
+          statusBadge = '<span style="background: rgba(239, 68, 68, 0.15); color: var(--accent-red); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Desativado</span>';
+        } else if (isExpired) {
+          statusBadge = '<span style="background: rgba(234, 179, 8, 0.15); color: var(--accent-yellow); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Expirado</span>';
+        }
+
+        // Exibir simplesmente "Vitalício" ou a data formatada
+        let dateDisplay = '<span style="color: var(--accent-blue); font-weight: 600;">Vitalício</span>';
+        if (!isLifetime && validUntil) {
+          dateDisplay = validUntil.toLocaleString('pt-BR');
+        }
+
+        // HWID mascarado com asteriscos e botão resetar alinhado abaixo
+        let hwidDisplay = '<span style="color: var(--text-muted); font-size: 0.75rem;">⚪ Livre (1º acesso)</span>';
+        if (lic.hwid && lic.hwid.trim() !== '') {
+          let resetBtn = '';
+          if (loggedRole === 'admin' || loggedRole === 'operator') {
+            resetBtn = `<button onclick="resetHwidAction('${lic.uuid}')" class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.7rem;" title="Desvincular HWID desta máquina">🔄 Resetar</button>`;
+          }
+          hwidDisplay = `
+            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+              <span style="background: rgba(34, 197, 94, 0.12); color: var(--accent-green); padding: 3px 7px; border-radius: 6px; font-family: monospace; font-size: 0.75rem; font-weight: 600; letter-spacing: 1px;" title="${escapeHtml(lic.hwid)}">🔒 ••••••••••••••••</span>
+              ${resetBtn}
+            </div>
+          `;
+        }
+
+        let actionBtns = '';
+        if (loggedRole === 'admin') {
+          actionBtns = `
+            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px; flex-wrap: nowrap;">
+              <button onclick="openEditModal('${lic.uuid}', '${escapeHtml(lic.company_name)}', '${lic.valid_until}', ${isLifetime ? 'true' : 'false'}, '${lic.status || 'active'}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">Editar</button>
+              <button onclick="deleteLicense('${lic.uuid}')" class="btn btn-danger" style="padding: 4px 10px; font-size: 0.8rem;">Excluir</button>
+            </div>
+          `;
+        } else if (loggedRole === 'operator') {
+          actionBtns = `
+            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px; flex-wrap: nowrap;">
+              <button onclick="openEditModal('${lic.uuid}', '${escapeHtml(lic.company_name)}', '${lic.valid_until}', ${isLifetime ? 'true' : 'false'}, '${lic.status || 'active'}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">Editar</button>
+            </div>
+          `;
+        } else {
+          actionBtns = `<span style="color: var(--text-muted); font-size: 0.75rem;">Somente Leitura</span>`;
+        }
+
+        return `
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 1rem;">
+              <strong style="color: var(--text-main); font-size: 0.95rem;">${escapeHtml(lic.company_name)}</strong>
+            </td>
+            <td style="padding: 1rem;">
+              <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+                <code style="background: var(--bg-input); padding: 4px 8px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; color: var(--accent-blue); font-weight: 600; letter-spacing: 1px;">••••••••-••••-••••</code>
+                <button onclick="copyToClipboard('${lic.uuid}', 'UUID copiado!')" class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.7rem; white-space: nowrap;" title="Copiar UUID Completo">📋 Copiar</button>
+              </div>
+            </td>
+            <td style="padding: 1rem;">
+              <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+                <code style="background: var(--bg-input); padding: 4px 8px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; color: #cbd5e1; font-weight: 600; letter-spacing: 1px;">••••••••••••••••</code>
+                <button onclick="copyToClipboard('${lic.api_key || ''}', 'X-API-Key copiada!')" class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.7rem; white-space: nowrap;" title="Copiar Key Completa">📋 Copiar Key</button>
+              </div>
+            </td>
+            <td style="padding: 1rem;">${hwidDisplay}</td>
+            <td style="padding: 1rem;">${statusBadge}</td>
+            <td style="padding: 1rem; color: var(--text-muted);">${dateDisplay}</td>
+            <td style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;"><span style="color: var(--accent-blue); font-weight: 600;">${escapeHtml(lic.created_by || 'Sistema')}</span></td>
+            <td style="padding: 1rem; text-align: right;">${actionBtns}</td>
+          </tr>
+        `;
+      }).join('');
+
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function resetHwidAction(uuid) {
+    if (loggedRole === 'user') return;
+    if (!confirm('Deseja desvincular o HWID desta licença? O próximo computador que tentar validar esta licença será registrado como o novo computador oficial.')) return;
+    try {
+      const res = await fetch(`/api/admin/licenses/${uuid}/reset-hwid`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('HWID desvinculado com sucesso!');
+        fetchLicenses();
+      } else {
+        alert('Erro: ' + data.error);
+      }
+    } catch (err) {
+      alert('Erro ao desvincular HWID.');
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function openAddModal() {
+    document.getElementById('modalTitle').textContent = 'Nova Licença';
+    document.getElementById('editUuid').value = '';
+    document.getElementById('company_name').value = '';
+    document.getElementById('is_lifetime').checked = false;
+    document.getElementById('status').value = 'active';
+    toggleLifetime(false);
+
+    const defaultDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    const tzOffset = defaultDate.getTimezoneOffset() * 60000;
+    const localIso = new Date(defaultDate.getTime() - tzOffset).toISOString().slice(0, 16);
+    document.getElementById('valid_until').value = localIso;
+
+    document.getElementById('licenseModal').style.display = 'flex';
+  }
+
+  function openEditModal(uuid, name, validUntilIso, isLifetime, status) {
+    document.getElementById('modalTitle').textContent = 'Editar Licença';
+    document.getElementById('editUuid').value = uuid;
+    document.getElementById('company_name').value = name;
+    document.getElementById('is_lifetime').checked = isLifetime;
+    document.getElementById('status').value = status;
+    toggleLifetime(isLifetime);
+
+    if (!isLifetime && validUntilIso && validUntilIso !== 'LIFETIME') {
+      const dateObj = new Date(validUntilIso);
+      const tzOffset = dateObj.getTimezoneOffset() * 60000;
+      const localIso = new Date(dateObj.getTime() - tzOffset).toISOString().slice(0, 16);
+      document.getElementById('valid_until').value = localIso;
+    }
+
+    document.getElementById('licenseModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('licenseModal').style.display = 'none';
+  }
+
+  document.getElementById('licenseForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const uuid = document.getElementById('editUuid').value;
+    const isLifetime = document.getElementById('is_lifetime').checked;
+    
+    const payload = {
+      company_name: document.getElementById('company_name').value,
+      is_lifetime: isLifetime,
+      valid_until: isLifetime ? 'LIFETIME' : new Date(document.getElementById('valid_until').value).toISOString(),
+      status: document.getElementById('status').value
+    };
+
+    const method = uuid ? 'PUT' : 'POST';
+    const url = uuid ? `/api/admin/licenses/${uuid}` : '/api/admin/licenses';
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        closeModal();
+        showToast(uuid ? 'Licença atualizada!' : 'Nova licença criada com sucesso!');
+        fetchLicenses();
+      } else {
+        alert('Erro: ' + (data.error || 'Não foi possível salvar a licença.'));
+      }
+    } catch (err) {
+      alert('Erro de conexão ao salvar licença.');
+    }
+  });
+
+  document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    try {
+      const res = await fetch('/api/admin/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ currentPassword, newPassword, confirmPassword })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        closePasswordModal();
+        showToast('Senha alterada com sucesso!');
+      } else {
+        alert('Erro: ' + (data.error || 'Não foi possível alterar a senha.'));
+      }
+    } catch (err) {
+      alert('Erro ao alterar senha.');
+    }
+  });
+
+  async function deleteLicense(uuid) {
+    if (loggedRole !== 'admin') return;
+    if (!confirm('Tem certeza que deseja excluir esta licença? O programa externo deixará de ter acesso.')) return;
+
+    try {
+      const res = await fetch(`/api/admin/licenses/${uuid}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Licença excluída!');
+        fetchLicenses();
+      } else {
+        alert('Erro: ' + data.error);
+      }
+    } catch (err) {
+      alert('Erro ao excluir licença.');
+    }
+  }
+
+  /* Buscar e Renderizar Logs de Acesso com Distinção Visual de Origem (Painel Web vs Validação API) */
+  async function fetchAccessLogs() {
+    if (loggedRole === 'user') return;
+    try {
+      const res = await fetch('/api/admin/access-logs', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      allAccessLogs = data.logs || [];
+      logsPage = 1;
+      renderAccessLogsTable();
+    } catch (err) {
+      console.error('Erro ao buscar logs:', err);
+    }
+  }
+
+  function renderAccessLogsTable() {
+    const tbody = document.getElementById('logsTableBody');
+    const pageInfo = document.getElementById('logsPageInfo');
+    const pageNum = document.getElementById('logsPageNum');
+    const btnPrev = document.getElementById('btnPrevLogs');
+    const btnNext = document.getElementById('btnNextLogs');
+
+    if (!allAccessLogs || allAccessLogs.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Nenhuma tentativa de acesso negado registrada.</td></tr>`;
+      pageInfo.textContent = 'Mostrando 0 de 0 tentativas';
+      pageNum.textContent = 'Página 1 de 1';
+      btnPrev.disabled = true;
+      btnNext.disabled = true;
+      return;
+    }
+
+    const totalPages = Math.ceil(allAccessLogs.length / LOGS_PER_PAGE) || 1;
+    if (logsPage > totalPages) logsPage = totalPages;
+    if (logsPage < 1) logsPage = 1;
+
+    const startIdx = (logsPage - 1) * LOGS_PER_PAGE;
+    const endIdx = Math.min(startIdx + LOGS_PER_PAGE, allAccessLogs.length);
+    const pageLogs = allAccessLogs.slice(startIdx, endIdx);
+
+    tbody.innerHTML = pageLogs.map(log => {
+      let originBadge = '';
+      let cleanReason = log.reason || '';
+
+      if (cleanReason.includes('[Painel Web]') || (log.endpoint && log.endpoint.includes('/admin'))) {
+        originBadge = '<span style="background: rgba(168, 85, 247, 0.18); color: #c084fc; padding: 2px 7px; border-radius: 5px; font-weight: 700; font-size: 0.72rem; margin-right: 6px; display: inline-block;">🌐 Painel Web</span>';
+        cleanReason = cleanReason.replace('[Painel Web]', '').trim();
+      } else if (cleanReason.includes('[Validação API]') || (log.endpoint && log.endpoint.includes('/validate'))) {
+        originBadge = '<span style="background: rgba(59, 130, 246, 0.18); color: #60a5fa; padding: 2px 7px; border-radius: 5px; font-weight: 700; font-size: 0.72rem; margin-right: 6px; display: inline-block;">🔑 Validação API</span>';
+        cleanReason = cleanReason.replace('[Validação API]', '').trim();
+      }
+
+      return `
+        <tr style="border-bottom: 1px solid var(--border-color);">
+          <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.8rem;">${new Date(log.created_at).toLocaleString('pt-BR')}</td>
+          <td style="padding: 0.75rem 1rem;"><code style="color: var(--accent-yellow); font-family: monospace; font-weight: 600;">${escapeHtml(log.ip)}</code></td>
+          <td style="padding: 0.75rem 1rem;"><code style="color: var(--accent-blue); font-family: monospace;">••••••••-••••-••••</code></td>
+          <td style="padding: 0.75rem 1rem;"><code style="color: #cbd5e1; font-family: monospace;">••••••••••••••••</code></td>
+          <td style="padding: 0.75rem 1rem;">
+            ${originBadge}
+            <span style="color: #ef4444; font-weight: 600;">${escapeHtml(cleanReason)}</span>
+          </td>
+          <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.75rem;" title="${escapeHtml(log.user_agent)}">${escapeHtml((log.user_agent || '').substring(0, 25))}${(log.user_agent || '').length > 25 ? '...' : ''}</td>
+          <td style="padding: 0.75rem 1rem; text-align: right;">
+            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px;">
+              ${(log.ip && log.ip !== 'desconhecido' && log.ip !== '127.0.0.1') ? `<button onclick="openBlockIpModal('${escapeHtml(log.ip)}', 'Bloqueado a partir dos logs de auditoria')" class="btn btn-danger" style="padding: 3px 8px; font-size: 0.75rem;" title="Bloquear IP ${escapeHtml(log.ip)}">🚫 Bloquear IP</button>` : '<span style="color: var(--text-muted); font-size: 0.75rem;">Localhost</span>'}
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    pageInfo.textContent = `Mostrando ${startIdx + 1}-${endIdx} de ${allAccessLogs.length} tentativas`;
+    pageNum.textContent = `Página ${logsPage} de ${totalPages}`;
+    btnPrev.disabled = (logsPage <= 1);
+    btnNext.disabled = (logsPage >= totalPages);
+  }
+
+  function changeLogsPage(delta) {
+    logsPage += delta;
+    renderAccessLogsTable();
+  }
+
+  async function clearAccessLogs() {
+    if (loggedRole !== 'admin') return;
+    if (!confirm('Deseja limpar todo o histórico de tentativas de acesso negado?')) return;
+    try {
+      const res = await fetch('/api/admin/access-logs', {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Logs de acesso limpos!');
+        fetchAccessLogs();
+      }
+    } catch (err) {
+      alert('Erro ao limpar logs.');
+    }
+  }
+
+  /* Listagem de Blacklist de IPs com Registro de Histórico de Desbloqueios */
+  async function fetchBlockedIps() {
+    if (loggedRole === 'user') return;
+    try {
+      const res = await fetch('/api/admin/blocked-ips', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      const tbody = document.getElementById('blockedIpsTableBody');
+      if (!data.blockedIps || data.blockedIps.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Nenhum IP no histórico de bloqueios.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = data.blockedIps.map(item => {
+        const isUnblocked = item.status === 'unblocked' || (item.unblocked_at && item.unblocked_at.trim() !== '');
+
+        let statusBadge = '<span style="background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">🔴 Bloqueado</span>';
+        if (isUnblocked) {
+          statusBadge = '<span style="background: rgba(34, 197, 94, 0.15); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">🟢 Desbloqueado</span>';
+        }
+
+        const blockedInfo = `<strong style="color: var(--accent-blue); font-size: 0.8rem;">${escapeHtml(item.blocked_by || 'Sistema')}</strong><br><span style="color: var(--text-muted); font-size: 0.75rem;">${new Date(item.created_at).toLocaleString('pt-BR')}</span>`;
+
+        let unblockedInfo = '<span style="color: var(--text-muted); font-size: 0.75rem;">-</span>';
+        if (isUnblocked) {
+          unblockedInfo = `<strong style="color: var(--accent-green); font-size: 0.8rem;">${escapeHtml(item.unblocked_by || 'Sistema')}</strong><br><span style="color: var(--text-muted); font-size: 0.75rem;">${new Date(item.unblocked_at).toLocaleString('pt-BR')}</span>`;
+        }
+
+        let actionBtn = '';
+        if (isUnblocked) {
+          actionBtn = `<button onclick="openBlockIpModal('${escapeHtml(item.ip)}', '${escapeHtml(item.reason || '')}')" class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem;">🚫 Re-Bloquear IP</button>`;
+        } else {
+          actionBtn = `<button onclick="unblockIpAction('${escapeHtml(item.ip)}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;">✅ Desbloquear IP</button>`;
+        }
+
+        return `
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 0.75rem 1rem;"><code style="color: ${isUnblocked ? 'var(--text-muted)' : '#ef4444'}; font-family: monospace; font-weight: 700; font-size: 0.9rem;">${escapeHtml(item.ip)}</code></td>
+            <td style="padding: 0.75rem 1rem;">${statusBadge}</td>
+            <td style="padding: 0.75rem 1rem; color: var(--text-main);">${escapeHtml(item.reason)}</td>
+            <td style="padding: 0.75rem 1rem;">${blockedInfo}</td>
+            <td style="padding: 0.75rem 1rem;">${unblockedInfo}</td>
+            <td style="padding: 0.75rem 1rem; text-align: right;">
+              <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px;">
+                ${actionBtn}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    } catch (err) {
+      console.error('Erro ao buscar IPs bloqueados:', err);
+    }
+  }
+
+  /* Funções para Modal de Bloqueio de IP */
+  function openBlockIpModal(ip = '', reason = '') {
+    if (loggedRole === 'user') return;
+    document.getElementById('blockIpInput').value = ip;
+    document.getElementById('blockIpReasonInput').value = reason || 'Tentativas suspeitas de ataque';
+    document.getElementById('blockIpModal').style.display = 'flex';
+  }
+
+  function closeBlockIpModal() {
+    document.getElementById('blockIpModal').style.display = 'none';
+  }
+
+  document.getElementById('blockIpForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const ip = document.getElementById('blockIpInput').value.trim();
+    const reason = document.getElementById('blockIpReasonInput').value.trim();
+
+    if (!ip) return;
+
+    try {
+      const res = await fetch('/api/admin/block-ip', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ ip, reason })
+      });
+      const data = await res.json();
+      if (data.success) {
+        closeBlockIpModal();
+        showToast(`IP ${ip} bloqueado com sucesso!`);
+        fetchBlockedIps();
+        fetchAccessLogs();
+      } else {
+        alert('Erro: ' + data.error);
+      }
+    } catch (err) {
+      alert('Erro ao bloquear IP.');
+    }
+  });
+
+  async function unblockIpAction(ip) {
+    if (loggedRole === 'user') return;
+    if (!confirm(`Tem certeza que deseja desbloquear o IP ${ip}? O registro será mantido com data e responsável pelo desbloqueio.`)) return;
+    try {
+      const res = await fetch('/api/admin/unblock-ip', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ ip })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`IP ${ip} desbloqueado!`);
+        fetchBlockedIps();
+      } else {
+        alert('Erro: ' + data.error);
+      }
+    } catch (err) {
+      alert('Erro ao desbloquear IP.');
+    }
+  }
+</script>

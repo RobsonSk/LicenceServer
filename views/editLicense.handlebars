@@ -1,0 +1,22 @@
+<html>
+<head>
+  <title>Edit License</title>
+</head>
+<body>
+  <h1>{{#if license.uuid}}Edit License{{else}}Add License{{/if}}</h1>
+  <form method="post" action="{{#if license.uuid}}/licenses/edit/{{license.uuid}}{{else}}/licenses/add{{/if}}">
+    <label>UUID: <input name="uuid" value="{{license.uuid}}" {{#if license.uuid}}readonly{{/if}}></label><br>
+    <label>Company Name: <input name="company_name" value="{{license.company_name}}"></label><br>
+    <label>CNPJ: <input name="cnpj" value="{{license.cnpj}}"></label><br>
+    <label>Phone: <input name="phone" value="{{license.phone}}"></label><br>
+    <label>Email: <input name="email" value="{{license.email}}"></label><br>
+    {{#if license.uuid}}
+      <label>Valid Until: <input name="valid_until" value="{{license.valid_until}}" type="datetime-local"></label><br>
+    {{else}}
+      <label>Valid Until: <input name="valid_until" value="{{license.valid_until}}" type="datetime-local" readonly></label><br>
+    {{/if}}
+    <button type="submit">Save</button>
+  </form>
+  <a href="/licenses">Back to list</a>
+</body>
+</html>

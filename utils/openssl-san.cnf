@@ -1,0 +1,19 @@
+[ req ]
+default_bits       = 4096
+distinguished_name = req_distinguished_name
+req_extensions     = v3_req
+prompt             = no
+
+[ req_distinguished_name ]
+CN = 10.5.1.12
+
+[ v3_req ]
+basicConstraints = critical,CA:TRUE
+keyUsage = critical, keyCertSign, cRLSign
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[ alt_names ]
+IP.1 = 10.5.1.12
+IP.2 = 127.0.0.1
+DNS.1 = localhost

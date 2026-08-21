@@ -1,0 +1,276 @@
+<div style="max-width: 440px; margin: 4rem auto 0;">
+  <div class="card">
+    <div style="text-align: center; margin-bottom: 1.75rem;">
+      <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Acesso ao Painel</h2>
+      <p id="loginSubtitle" style="color: var(--text-muted); font-size: 0.9rem;">Insira seu e-mail e senha de acesso.</p>
+    </div>
+
+    <div id="alert-box"
+      style="display: none; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1.25rem; background-color: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3);">
+    </div>
+
+    <!-- Etapa 1: E-mail e Senha -->
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">E-mail</label>
+        <input type="text" id="username" class="form-control" placeholder="seu.email@empresa.com" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem; margin-top: 0.5rem;">
+        Entrar no Painel
+      </button>
+    </form>
+
+    <!-- Etapa 2: Verificação do Código TOTP de 6 dígitos (para quem já tem MFA) -->
+    <form id="mfaForm" style="display: none;">
+      <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 1rem; border-radius: 8px; margin-bottom: 1.25rem; text-align: center;">
+        <div style="font-size: 1.5rem; margin-bottom: 4px;">📱</div>
+        <strong style="color: var(--accent-blue); font-size: 0.95rem;">Autenticação em Duas Etapas</strong>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Abra seu aplicativo autenticador (Google Authenticator / Authy) e digite o código de 6 dígitos.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="totpCode">Código de 6 dígitos</label>
+        <input type="text" id="totpCode" class="form-control" placeholder="123456" maxlength="6" pattern="[0-9]{6}" required style="text-align: center; letter-spacing: 4px; font-size: 1.25rem; font-weight: 700; font-family: monospace;">
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem; margin-top: 0.5rem;">
+        Confirmar Código MFA
+      </button>
+
+      <button type="button" onclick="cancelMfaStep()" class="btn btn-secondary" style="width: 100%; padding: 0.6rem; margin-top: 0.5rem;">
+        ← Voltar ao Login
+      </button>
+    </form>
+
+    <!-- Etapa 3A: Tela de Escolha / Confirmação de Cadastro de MFA Obrigatório -->
+    <div id="mfaChoiceOnboardingForm" style="display: none;">
+      <div style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); padding: 1.25rem; border-radius: 10px; margin-bottom: 1.25rem; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 6px;">🔐</div>
+        <strong style="color: #c084fc; font-size: 1rem; display: block; margin-bottom: 4px;">MFA Obrigatório no Serviço</strong>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0; line-height: 1.4;">
+          A política global deste servidor exige a ativação da Autenticação em Duas Etapas (MFA) para liberar seu acesso ao painel.
+        </p>
+      </div>
+
+      <button type="button" onclick="startMfaOnboardingSetup()" class="btn btn-primary" style="width: 100%; padding: 0.85rem;">
+        📱 Configurar MFA Agora
+      </button>
+
+      <button type="button" onclick="cancelMfaStep()" class="btn btn-secondary" style="width: 100%; padding: 0.6rem; margin-top: 0.5rem;">
+        ← Voltar ao Login
+      </button>
+    </div>
+
+    <!-- Etapa 3B: Exibição do QR Code e Entrada de Código durante o Login -->
+    <form id="mfaQrOnboardingForm" style="display: none;">
+      <div style="text-align: center; margin-bottom: 1rem;">
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px;">1. Abra seu aplicativo (Google Authenticator / Authy) e escaneie o QR Code abaixo:</p>
+        <div style="background: #fff; padding: 10px; border-radius: 10px; display: inline-block; margin-bottom: 8px;">
+          <img id="onboardingQrCodeImg" src="" alt="MFA QR Code" style="width: 160px; height: 160px; display: block;">
+        </div>
+        <div style="font-size: 0.72rem; color: var(--text-muted); word-break: break-all;">
+          Chave Manual: <code id="onboardingSecretText" style="color: var(--accent-blue); font-family: monospace; font-weight: 700;"></code>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="onboardingTotpCode">2. Digite o código de 6 dígitos gerado no app para ativar</label>
+        <input type="text" id="onboardingTotpCode" class="form-control" placeholder="123456" maxlength="6" pattern="[0-9]{6}" required style="text-align: center; letter-spacing: 4px; font-size: 1.25rem; font-weight: 700; font-family: monospace;">
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem; margin-top: 0.5rem;">
+        Ativar MFA e Entrar no Painel
+      </button>
+
+      <button type="button" onclick="cancelMfaStep()" class="btn btn-secondary" style="width: 100%; padding: 0.6rem; margin-top: 0.5rem;">
+        ← Voltar ao Login
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+  let pendingMfaToken = null;
+  let generatedOnboardingSecret = null;
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const alertBox = document.getElementById('alert-box');
+    alertBox.style.display = 'none';
+
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await response.json();
+
+      if (response.status === 429) {
+        alertBox.textContent = data.error || 'Muitas tentativas. Aguarde 15 minutos.';
+        alertBox.style.display = 'block';
+        return;
+      }
+
+      if (data.success) {
+        if (data.mfaRequired) {
+          // Usuário já possui MFA ativado -> Exigir 2ª etapa
+          pendingMfaToken = data.mfaToken;
+          document.getElementById('loginForm').style.display = 'none';
+          document.getElementById('mfaForm').style.display = 'block';
+          document.getElementById('loginSubtitle').textContent = 'Confirmação de Segurança (2FA / MFA)';
+          document.getElementById('totpCode').focus();
+        } else if (data.mfaSetupRequired) {
+          // Política de MFA Obrigatório está ativada -> Exibe tela de escolha para onboarding
+          pendingMfaToken = data.mfaToken;
+          document.getElementById('loginForm').style.display = 'none';
+          document.getElementById('mfaChoiceOnboardingForm').style.display = 'block';
+          document.getElementById('loginSubtitle').textContent = 'Cadastro Obrigatório de MFA';
+        } else if (data.token) {
+          localStorage.setItem('admin_token', data.token);
+          localStorage.setItem('admin_username', data.username || username);
+          localStorage.setItem('admin_name', data.name || data.username || username);
+          localStorage.setItem('admin_role', data.role || 'admin');
+          window.location.href = '/admin';
+        }
+      } else {
+        alertBox.textContent = data.error || 'Usuário ou senha incorretos.';
+        alertBox.style.display = 'block';
+      }
+    } catch (err) {
+      alertBox.textContent = 'Erro ao se comunicar com o servidor.';
+      alertBox.style.display = 'block';
+    }
+  });
+
+  /* Etapa 2: Confirmar Login com Código TOTP de quem já tem MFA */
+  document.getElementById('mfaForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const totpToken = document.getElementById('totpCode').value.trim();
+    const alertBox = document.getElementById('alert-box');
+    alertBox.style.display = 'none';
+
+    if (!pendingMfaToken || !totpToken) return;
+
+    try {
+      const response = await fetch('/api/admin/mfa/verify-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mfaToken: pendingMfaToken, totpToken })
+      });
+      const data = await response.json();
+
+      if (response.status === 429) {
+        alertBox.textContent = data.error || 'Muitas tentativas. Aguarde 15 minutos.';
+        alertBox.style.display = 'block';
+        return;
+      }
+
+      if (data.success && data.token) {
+        localStorage.setItem('admin_token', data.token);
+        localStorage.setItem('admin_username', data.username);
+        localStorage.setItem('admin_name', data.name || data.username);
+        localStorage.setItem('admin_role', data.role || 'admin');
+        window.location.href = '/admin';
+      } else {
+        alertBox.textContent = data.error || 'Código de autenticação de 6 dígitos incorreto.';
+        alertBox.style.display = 'block';
+      }
+    } catch (err) {
+      alertBox.textContent = 'Erro ao validar código MFA.';
+      alertBox.style.display = 'block';
+    }
+  });
+
+  /* Etapa 3A: Usuário clica para iniciar a configuração do QR Code */
+  async function startMfaOnboardingSetup() {
+    const alertBox = document.getElementById('alert-box');
+    alertBox.style.display = 'none';
+
+    if (!pendingMfaToken) return;
+
+    try {
+      const response = await fetch('/api/admin/mfa/setup-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mfaToken: pendingMfaToken })
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        generatedOnboardingSecret = data.secret;
+        document.getElementById('onboardingQrCodeImg').src = data.qrCode;
+        document.getElementById('onboardingSecretText').textContent = data.secret;
+
+        document.getElementById('mfaChoiceOnboardingForm').style.display = 'none';
+        document.getElementById('mfaQrOnboardingForm').style.display = 'block';
+        document.getElementById('onboardingTotpCode').value = '';
+        document.getElementById('onboardingTotpCode').focus();
+      } else {
+        alertBox.textContent = data.error || 'Erro ao gerar QR Code de onboarding.';
+        alertBox.style.display = 'block';
+      }
+    } catch (err) {
+      alertBox.textContent = 'Erro ao conectar com o servidor.';
+      alertBox.style.display = 'block';
+    }
+  }
+
+  /* Etapa 3B: Usuário digita o código de 6 dígitos para confirmar e concluir login */
+  document.getElementById('mfaQrOnboardingForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const totpToken = document.getElementById('onboardingTotpCode').value.trim();
+    const alertBox = document.getElementById('alert-box');
+    alertBox.style.display = 'none';
+
+    if (!pendingMfaToken || !generatedOnboardingSecret || !totpToken) return;
+
+    try {
+      const response = await fetch('/api/admin/mfa/enable-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mfaToken: pendingMfaToken,
+          secret: generatedOnboardingSecret,
+          totpToken
+        })
+      });
+      const data = await response.json();
+
+      if (data.success && data.token) {
+        localStorage.setItem('admin_token', data.token);
+        localStorage.setItem('admin_username', data.username);
+        localStorage.setItem('admin_name', data.name || data.username);
+        localStorage.setItem('admin_role', data.role || 'admin');
+        window.location.href = '/admin';
+      } else {
+        alertBox.textContent = data.error || 'Código de 6 dígitos incorreto. Verifique o horário do aplicativo.';
+        alertBox.style.display = 'block';
+      }
+    } catch (err) {
+      alertBox.textContent = 'Erro ao ativar MFA e concluir login.';
+      alertBox.style.display = 'block';
+    }
+  });
+
+  function cancelMfaStep() {
+    pendingMfaToken = null;
+    generatedOnboardingSecret = null;
+    document.getElementById('mfaForm').style.display = 'none';
+    document.getElementById('mfaChoiceOnboardingForm').style.display = 'none';
+    document.getElementById('mfaQrOnboardingForm').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('loginSubtitle').textContent = 'Insira seu e-mail e senha de acesso.';
+    document.getElementById('totpCode').value = '';
+    document.getElementById('onboardingTotpCode').value = '';
+    document.getElementById('alert-box').style.display = 'none';
+  }
+</script>
