@@ -39,7 +39,7 @@ Servidor de validação e gerenciamento de licenças de software desenvolvido em
 
 ### 1. Clonar o Repositório
 ```bash
-git clone [https://github.com/RobsonSk/LicenceServer](https://github.com/RobsonSk/LicenceServer)
+git clone https://github.com/RobsonSk/LicenceServer
 cd License-Server
 ```
 
