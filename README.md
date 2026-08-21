@@ -137,11 +137,9 @@ X-API-Key: SUA_X_API_KEY
 License-Server/
 ├── auth.js               # Middleware de autenticação JWT e controle de roles
 ├── db.js                 # Inicialização do banco de dados SQLite e utilitários
-├── licenses.routes.js    # Rotas de gerenciamento interno de licenças
 ├── routes.js             # Rotas principais da API (/api/validate, admin e auth)
 ├── server.js             # Ponto de entrada do aplicativo (Servidor HTTP/HTTPS)
 ├── test_hwid_curls.sh    # Script Bash com cURLs para teste local
-├── utils/                # Scripts auxiliares para geração de certificados SSL
 ├── views/                # Interface Web do Painel Admin (Handlebars)
 ├── .env.example          # Modelo de arquivo de ambiente
 └── .gitignore            # Regras de exclusão do Git

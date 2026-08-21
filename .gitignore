@@ -14,22 +14,12 @@ node_modules/
 *.db-wal
 *.db-shm
 
-# Certificados SSL / TLS e Chaves Privadas Sensíveis
+# Certificados SSL / TLS e Chaves Privadas Sensíveis (Servidor)
 certs/*.pem
 certs/*.key
 certs/*.crt
 certs/*.srl
 !certs/.gitkeep
-
-# Certificados de Clientes gerados dinamicamente
-client-certs/*
-!client-certs/.gitkeep
-
-# Chaves e certificados temporários gerados em utils
-utils/*.pem
-utils/*.key
-utils/*.csr
-utils/*.srl
 
 # Relatórios e arquivos de varredura/auditoria de segurança (OWASP ZAP)
 activescan.csv
