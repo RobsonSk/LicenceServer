@@ -874,7 +874,7 @@ router.post('/api/admin/users', authenticateAdminToken, requireRole(['admin']), 
 // Editar usuário (Apenas Admin)
 router.put('/api/admin/users/:id', authenticateAdminToken, requireRole(['admin']), async (req, res) => {
   const { id } = req.params;
-  const { name, email, role, newPassword } = req.body;
+  const { name, email, role, newPassword, resetMfa } = req.body;
 
   if (newPassword && newPassword.trim() !== '') {
     if (!validatePasswordStrength(newPassword)) {
@@ -886,7 +886,7 @@ router.put('/api/admin/users/:id', authenticateAdminToken, requireRole(['admin']
   }
 
   try {
-    const updatedUser = await updateUserByAdmin({ id, name, email, role, password: newPassword });
+    const updatedUser = await updateUserByAdmin({ id, name, email, role, password: newPassword, resetMfa });
     return res.json({ success: true, user: updatedUser });
   } catch (error) {
     return res.status(400).json({ success: false, error: error.message });

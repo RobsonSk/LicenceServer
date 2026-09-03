@@ -35,7 +35,7 @@
     ⚙️ Configurações Globais
   </button>
   <button id="tabBtnReleases" onclick="switchTab('releases')" style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
-    🚀 Atualizações Executáveis
+    Atualizações Executáveis
   </button>
 </div>
 
@@ -50,7 +50,7 @@
     </div>
     <div style="display: flex; gap: 8px;">
       <button onclick="fetchLicenses()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">
-        🔄 Atualizar Licenças
+        Atualizar Licenças
       </button>
       <button id="btnAddLicense" onclick="openAddModal()" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">
         + Nova Licença
@@ -91,13 +91,13 @@
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
     <div>
       <h2 style="font-size: 1.25rem; font-weight: 700; color: #ef4444; display: flex; align-items: center; gap: 8px;">
-        🛡️ Tentativas de Acesso Negado / Ataques Suspeitos
+        Tentativas de Acesso Negado / Ataques Suspeitos
       </h2>
-      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Histórico detalhado de requisições rejeitadas com origem identificada (🌐 Painel Web vs 🔑 Validação API).</p>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Histórico detalhado de requisições rejeitadas com origem identificada (Painel Web vs Validação API).</p>
     </div>
     <div style="display: flex; gap: 8px;">
-      <button onclick="fetchAccessLogs()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">🔄 Atualizar Logs</button>
-      <button id="btnClearLogs" onclick="clearAccessLogs()" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;">🗑️ Limpar Histórico</button>
+      <button onclick="fetchAccessLogs()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">Atualizar Logs</button>
+      <button id="btnClearLogs" onclick="clearAccessLogs()" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;">Limpar Histórico</button>
     </div>
   </div>
 
@@ -138,12 +138,12 @@
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
     <div>
       <h2 style="font-size: 1.25rem; font-weight: 700; color: #f59e0b; display: flex; align-items: center; gap: 8px;">
-        🚫 Blacklist e Histórico de IPs Bloqueados
+        Blacklist e Histórico de IPs Bloqueados
       </h2>
       <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Registro de bloqueios e desbloqueios com auditoria (Quem bloqueou/desbloqueou e data).</p>
     </div>
     <div style="display: flex; gap: 8px;">
-      <button onclick="fetchBlockedIps()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">🔄 Atualizar Blacklist</button>
+      <button onclick="fetchBlockedIps()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">Atualizar Blacklist</button>
       <button onclick="openBlockIpModal()" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">+ Bloquear IP Manualmente</button>
     </div>
   </div>
@@ -218,19 +218,19 @@
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
     <div>
       <h2 style="font-size: 1.3rem; font-weight: 700; color: #c084fc; display: flex; align-items: center; gap: 8px;">
-        ⚙️ Configurações e Políticas Globais do Serviço
+        Configurações e Políticas Globais do Serviço
       </h2>
       <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Defina diretrizes globais de segurança e autenticação aplicadas a todo o servidor.</p>
     </div>
     <div>
-      <button onclick="fetchSystemSettings()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">🔄 Recarregar Configurações</button>
+      <button onclick="fetchSystemSettings()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">Recarregar Configurações</button>
     </div>
   </div>
 
   <div class="card" style="max-width: 680px; margin-bottom: 2rem;">
     <form id="systemSettingsForm">
       <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-        🔐 Políticas Globais de Autenticação e MFA (2FA)
+        Políticas Globais de Autenticação e MFA (2FA)
       </h3>
 
       <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.2); padding: 1.25rem; border-radius: 10px; margin-bottom: 1.5rem;">
@@ -249,7 +249,7 @@
 
       <div style="display: flex; justify-content: flex-end;">
         <button type="submit" class="btn btn-primary" style="padding: 8px 18px;">
-          💾 Salvar Configurações Globais
+          Salvar Configurações Globais
         </button>
       </div>
     </form>
@@ -266,9 +266,9 @@
       <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Gerenciamento de versões de programas e executáveis distribuídos para clientes.</p>
     </div>
     <div style="display: flex; gap: 8px;">
-      <button onclick="fetchReleases()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">🔄 Atualizar Lista</button>
+      <button onclick="fetchReleases()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">Atualizar Lista</button>
       <button id="btnOpenReleaseModal" onclick="openReleaseModal()" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
-        ➕ Nova Release (.exe)
+        Nova Release (.exe)
       </button>
     </div>
   </div>
@@ -277,7 +277,8 @@
     <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
       <thead>
         <tr style="background: var(--bg-hover); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
-          <th style="padding: 12px 16px;">App ID</th>
+          <th style="padding: 12px 16px;">App ID / Nome</th>
+          <th style="padding: 12px 16px;">Descrição</th>
           <th style="padding: 12px 16px;">Versão</th>
           <th style="padding: 12px 16px;">Código</th>
           <th style="padding: 12px 16px;">Tamanho</th>
@@ -289,7 +290,7 @@
         </tr>
       </thead>
       <tbody id="releasesTableBody">
-        <tr><td colspan="9" style="padding: 2rem; text-align: center; color: var(--text-muted);">Carregando releases executáveis...</td></tr>
+        <tr><td colspan="10" style="padding: 2rem; text-align: center; color: var(--text-muted);">Carregando releases executáveis...</td></tr>
       </tbody>
     </table>
   </div>
@@ -500,7 +501,7 @@
 <div id="editUserModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
   <div class="card" style="width: 100%; max-width: 460px; margin: 0 1rem; position: relative;">
     <button type="button" onclick="closeEditUserModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
-    <h3 style="margin-bottom: 1.25rem;">✏️ Editar Usuário</h3>
+    <h3 style="margin-bottom: 1.25rem;">Editar Usuário</h3>
     <form id="editUserForm">
       <input type="hidden" id="editUserId">
       <div class="form-group">
@@ -527,7 +528,7 @@
       <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px; margin-top: 1rem; margin-bottom: 1rem;">
         <input type="checkbox" id="editResetMfa" style="width: 18px; height: 18px; cursor: pointer;">
         <label for="editResetMfa" style="cursor: pointer; margin: 0; font-size: 0.85rem; color: #ef4444; font-weight: 600;">
-          🔓 Desativar / Resetar Autenticação MFA deste usuário
+          Desativar / Resetar Autenticação MFA deste usuário
         </label>
       </div>
 
@@ -536,29 +537,6 @@
         <button type="submit" class="btn btn-primary">Salvar Alterações</button>
       </div>
     </form>
-  </div>
-</div>
-
-<div class="card" style="padding: 0; overflow-x: auto;">
-    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
-      <thead>
-        <tr style="background: var(--bg-hover); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
-          <th style="padding: 12px 16px;">App ID / Nome</th>
-          <th style="padding: 12px 16px;">Descrição</th>
-          <th style="padding: 12px 16px;">Versão</th>
-          <th style="padding: 12px 16px;">Código</th>
-          <th style="padding: 12px 16px;">Tamanho</th>
-          <th style="padding: 12px 16px;">Hash SHA-256</th>
-          <th style="padding: 12px 16px;">Obrigatória</th>
-          <th style="padding: 12px 16px;">Status</th>
-          <th style="padding: 12px 16px;">Data de Upload</th>
-          <th style="padding: 12px 16px; text-align: center;">Ações</th>
-        </tr>
-      </thead>
-      <tbody id="releasesTableBody">
-        <tr><td colspan="10" style="padding: 2rem; text-align: center; color: var(--text-muted);">Carregando releases executáveis...</td></tr>
-      </tbody>
-    </table>
   </div>
 </div>
 
@@ -571,7 +549,7 @@
   <div class="card" style="width: 100%; max-width: 560px; margin: 0 1rem; position: relative; max-height: 90vh; overflow-y: auto;">
     <button type="button" onclick="closeReleaseModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
     <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-      🚀 Cadastrar Nova Release (.exe)
+      Cadastrar Nova Release (.exe)
     </h3>
     <form id="releaseForm">
       <div style="display: flex; gap: 12px; margin-bottom: 1rem;">
@@ -619,7 +597,7 @@
 
       <div style="display: flex; justify-content: flex-end; gap: 10px;">
         <button type="button" onclick="closeReleaseModal()" class="btn btn-secondary">Cancelar</button>
-        <button type="submit" id="btnSubmitRelease" class="btn btn-primary">📤 Enviar e Cadastrar Release</button>
+        <button type="submit" id="btnSubmitRelease" class="btn btn-primary">Enviar e Cadastrar Release</button>
       </div>
     </form>
   </div>
@@ -630,7 +608,7 @@
   <div class="card" style="width: 100%; max-width: 520px; margin: 0 1rem; position: relative; max-height: 90vh; overflow-y: auto;">
     <button type="button" onclick="closeEntitlementsModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1;" title="Fechar Modal">✕</button>
     <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">
-      🛒 Softwares Contratados pelo Cliente
+      Softwares Contratados pelo Cliente
     </h3>
     <p id="entitlementsClientName" style="color: var(--accent-blue); font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;"></p>
 
@@ -913,16 +891,16 @@
         return;
       }
       tbody.innerHTML = data.users.map(u => {
-        let rBadge = '<span style="color: #9ca3af;">👤 Usuário</span>';
-        if (u.role === 'admin') rBadge = '<span style="color: #c084fc; font-weight: 700;">👑 Admin</span>';
-        if (u.role === 'operator') rBadge = '<span style="color: #60a5fa; font-weight: 700;">🛠️ Operador</span>';
+        let rBadge = '<span style="color: #9ca3af;">Usuário</span>';
+        if (u.role === 'admin') rBadge = '<span style="color: #c084fc; font-weight: 700;">Admin</span>';
+        if (u.role === 'operator') rBadge = '<span style="color: #60a5fa; font-weight: 700;">Operador</span>';
 
         const displayName = u.name || u.username;
         const userEmail = u.email || u.username;
 
         let mfaBadge = Number(u.mfa_enabled) === 1 
-          ? '<span style="background: rgba(34, 197, 94, 0.15); color: var(--accent-green); padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">🟢 MFA Ativo</span>'
-          : '<span style="background: rgba(156, 163, 175, 0.15); color: var(--text-muted); padding: 3px 8px; border-radius: 6px; font-size: 0.75rem;">⚪ Inativo</span>';
+          ? '<span style="background: rgba(34, 197, 94, 0.15); color: var(--accent-green); padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">MFA Ativo</span>'
+          : '<span style="background: rgba(156, 163, 175, 0.15); color: var(--text-muted); padding: 3px 8px; border-radius: 6px; font-size: 0.75rem;">Inativo</span>';
 
         return `
           <tr style="border-bottom: 1px solid var(--border-color);">
@@ -937,7 +915,7 @@
             <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.8rem;">${new Date(u.created_at).toLocaleString('pt-BR')}</td>
             <td style="padding: 0.75rem 1rem; text-align: right;">
               <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px;">
-                <button onclick="openEditUserModal(${u.id}, '${escapeHtml(displayName)}', '${escapeHtml(userEmail)}', '${u.role}')" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;">Editar</button>
+                <button onclick="openEditUserModal(${u.id}, '${escapeHtml(displayName)}', '${escapeHtml(userEmail)}', '${u.role}', ${u.mfa_enabled || 0})" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;">Editar</button>
                 ${u.username !== 'admin' ? `<button onclick="deleteUserAction(${u.id}, '${escapeHtml(displayName)}')" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;">Excluir</button>` : '<span style="color: var(--text-muted); font-size: 0.75rem; margin-left: 4px;">Padrão</span>'}
               </div>
             </td>
@@ -1259,15 +1237,15 @@
         }
 
         // HWID mascarado com asteriscos e botão resetar alinhado abaixo
-        let hwidDisplay = '<span style="color: var(--text-muted); font-size: 0.75rem;">⚪ Livre (1º acesso)</span>';
+        let hwidDisplay = '<span style="color: var(--text-muted); font-size: 0.75rem;">Livre (1º acesso)</span>';
         if (lic.hwid && lic.hwid.trim() !== '') {
           let resetBtn = '';
           if (loggedRole === 'admin' || loggedRole === 'operator') {
-            resetBtn = `<button onclick="resetHwidAction('${lic.uuid}')" class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.7rem;" title="Desvincular HWID desta máquina">🔄 Resetar</button>`;
+            resetBtn = `<button onclick="resetHwidAction('${lic.uuid}')" class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.7rem;" title="Desvincular HWID desta máquina">Resetar</button>`;
           }
           hwidDisplay = `
             <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
-              <span style="background: rgba(34, 197, 94, 0.12); color: var(--accent-green); padding: 3px 7px; border-radius: 6px; font-family: monospace; font-size: 0.75rem; font-weight: 600; letter-spacing: 1px;" title="${escapeHtml(lic.hwid)}">🔒 ••••••••••••••••</span>
+              <span style="background: rgba(34, 197, 94, 0.12); color: var(--accent-green); padding: 3px 7px; border-radius: 6px; font-family: monospace; font-size: 0.75rem; font-weight: 600; letter-spacing: 1px;" title="${escapeHtml(lic.hwid)}">••••••••••••••••</span>
               ${resetBtn}
             </div>
           `;
@@ -1277,7 +1255,7 @@
         if (loggedRole === 'admin') {
           actionBtns = `
             <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px; flex-wrap: nowrap;">
-              <button onclick="openEntitlementsModal('${lic.uuid}', '${escapeHtml(lic.company_name)}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" title="Configurar softwares contratados pelo cliente no Hub">🛒 Apps</button>
+              <button onclick="openEntitlementsModal('${lic.uuid}', '${escapeHtml(lic.company_name)}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" title="Configurar softwares contratados pelo cliente no Hub">Apps</button>
               <button onclick="openEditModal('${lic.uuid}', '${escapeHtml(lic.company_name)}', '${lic.valid_until}', ${isLifetime ? 'true' : 'false'}, '${lic.status || 'active'}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">Editar</button>
               <button onclick="deleteLicense('${lic.uuid}')" class="btn btn-danger" style="padding: 4px 10px; font-size: 0.8rem;">Excluir</button>
             </div>
@@ -1285,7 +1263,7 @@
         } else if (loggedRole === 'operator') {
           actionBtns = `
             <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px; flex-wrap: nowrap;">
-              <button onclick="openEntitlementsModal('${lic.uuid}', '${escapeHtml(lic.company_name)}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" title="Configurar softwares contratados pelo cliente no Hub">🛒 Apps</button>
+              <button onclick="openEntitlementsModal('${lic.uuid}', '${escapeHtml(lic.company_name)}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" title="Configurar softwares contratados pelo cliente no Hub">Apps</button>
               <button onclick="openEditModal('${lic.uuid}', '${escapeHtml(lic.company_name)}', '${lic.valid_until}', ${isLifetime ? 'true' : 'false'}, '${lic.status || 'active'}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">Editar</button>
             </div>
           `;
@@ -1301,13 +1279,13 @@
             <td style="padding: 1rem;">
               <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
                 <code style="background: var(--bg-input); padding: 4px 8px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; color: var(--accent-blue); font-weight: 600; letter-spacing: 1px;">••••••••-••••-••••</code>
-                <button onclick="copyToClipboard('${lic.uuid}', 'UUID copiado!')" class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.7rem; white-space: nowrap;" title="Copiar UUID Completo">📋 Copiar</button>
+                <button onclick="copyToClipboard('${lic.uuid}', 'UUID copiado!')" class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.7rem; white-space: nowrap;" title="Copiar UUID Completo">Copiar</button>
               </div>
             </td>
             <td style="padding: 1rem;">
               <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
                 <code style="background: var(--bg-input); padding: 4px 8px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; color: #cbd5e1; font-weight: 600; letter-spacing: 1px;">••••••••••••••••</code>
-                <button onclick="copyToClipboard('${lic.api_key || ''}', 'X-API-Key copiada!')" class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.7rem; white-space: nowrap;" title="Copiar Key Completa">📋 Copiar Key</button>
+                <button onclick="copyToClipboard('${lic.api_key || ''}', 'X-API-Key copiada!')" class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.7rem; white-space: nowrap;" title="Copiar Key Completa">Copiar Key</button>
               </div>
             </td>
             <td style="padding: 1rem;">${hwidDisplay}</td>
@@ -1716,11 +1694,11 @@
         const hashShort = rel.sha256_hash ? rel.sha256_hash.substring(0, 12) + '...' : '-';
 
         const statusBadge = isActive
-          ? '<span style="background: rgba(34, 197, 94, 0.15); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">🟢 Ativa</span>'
-          : '<span style="background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">🔴 Inativa</span>';
+          ? '<span style="background: rgba(34, 197, 94, 0.15); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Ativa</span>'
+          : '<span style="background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Inativa</span>';
 
         const mandatoryBadge = isMandatory
-          ? '<span style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">⚠️ Sim</span>'
+          ? '<span style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Sim</span>'
           : '<span style="color: var(--text-muted); font-size: 0.8rem;">Não</span>';
 
         let actionBtns = '';
