@@ -15,6 +15,9 @@ dotenv.config();
 
 const app = express();
 
+// Configurar trust proxy para ler o IP real do cliente atrás de proxies reversos (HAProxy, pfSense, Nginx)
+app.set('trust proxy', 1);
+
 // Enable CORS for external client applications
 app.use(cors());
 

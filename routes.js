@@ -23,6 +23,7 @@ const loginRateLimiter = rateLimit({
   skipSuccessfulRequests: true,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   handler: async (req, res) => {
     const ip = getClientIp(req);
     await logAccessAttempt({
