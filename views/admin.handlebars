@@ -539,27 +539,65 @@
   </div>
 </div>
 
+<div class="card" style="padding: 0; overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+      <thead>
+        <tr style="background: var(--bg-hover); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+          <th style="padding: 12px 16px;">App ID / Nome</th>
+          <th style="padding: 12px 16px;">Descrição</th>
+          <th style="padding: 12px 16px;">Versão</th>
+          <th style="padding: 12px 16px;">Código</th>
+          <th style="padding: 12px 16px;">Tamanho</th>
+          <th style="padding: 12px 16px;">Hash SHA-256</th>
+          <th style="padding: 12px 16px;">Obrigatória</th>
+          <th style="padding: 12px 16px;">Status</th>
+          <th style="padding: 12px 16px;">Data de Upload</th>
+          <th style="padding: 12px 16px; text-align: center;">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="releasesTableBody">
+        <tr><td colspan="10" style="padding: 2rem; text-align: center; color: var(--text-muted);">Carregando releases executáveis...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- =================================================================== -->
+<!-- MODAIS DO SISTEMA (com Botão X de Fechamento no Topo) -->
+<!-- =================================================================== -->
+
 <!-- Modal para Cadastrar Nova Release Executável -->
 <div id="modalRelease" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
-  <div class="card" style="width: 100%; max-width: 540px; margin: 0 1rem; position: relative; max-height: 90vh; overflow-y: auto;">
+  <div class="card" style="width: 100%; max-width: 560px; margin: 0 1rem; position: relative; max-height: 90vh; overflow-y: auto;">
     <button type="button" onclick="closeReleaseModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
     <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
       🚀 Cadastrar Nova Release (.exe)
     </h3>
     <form id="releaseForm">
+      <div style="display: flex; gap: 12px; margin-bottom: 1rem;">
+        <div style="flex: 1;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Identificador do App (App ID) *</label>
+          <input type="text" id="releaseAppId" required placeholder="Ex: atualizadoNBS ou monitor" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
+        </div>
+        <div style="flex: 1;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Nome de Exibição do App *</label>
+          <input type="text" id="releaseAppName" required placeholder="Ex: Atualizador NBS" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
+        </div>
+      </div>
+
       <div style="margin-bottom: 1rem;">
-        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Identificador do App (App ID) *</label>
-        <input type="text" id="releaseAppId" required placeholder="Ex: AtualizadorSistemas ou PDV" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Descrição do Aplicativo (Central Hub)</label>
+        <input type="text" id="releaseAppDescription" placeholder="Ex: Módulo de atualização de cadastros e notas fiscais." style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
       </div>
 
       <div style="display: flex; gap: 12px; margin-bottom: 1rem;">
         <div style="flex: 1;">
           <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Nome da Versão *</label>
-          <input type="text" id="releaseVersionName" required placeholder="Ex: 1.1.0" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
+          <input type="text" id="releaseVersionName" required placeholder="Ex: 1.2.0" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
         </div>
         <div style="flex: 1;">
           <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Código Numérico *</label>
-          <input type="number" id="releaseVersionCode" required placeholder="Ex: 110" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
+          <input type="number" id="releaseVersionCode" required placeholder="Ex: 120" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
         </div>
       </div>
 
@@ -582,6 +620,34 @@
       <div style="display: flex; justify-content: flex-end; gap: 10px;">
         <button type="button" onclick="closeReleaseModal()" class="btn btn-secondary">Cancelar</button>
         <button type="submit" id="btnSubmitRelease" class="btn btn-primary">📤 Enviar e Cadastrar Release</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal para Configurar Permissões de Apps por Cliente (Entitlements) -->
+<div id="modalEntitlements" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000;">
+  <div class="card" style="width: 100%; max-width: 520px; margin: 0 1rem; position: relative; max-height: 90vh; overflow-y: auto;">
+    <button type="button" onclick="closeEntitlementsModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1;" title="Fechar Modal">✕</button>
+    <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">
+      🛒 Softwares Contratados pelo Cliente
+    </h3>
+    <p id="entitlementsClientName" style="color: var(--accent-blue); font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;"></p>
+
+    <form id="entitlementsForm">
+      <input type="hidden" id="entitlementsClientUuid">
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">Selecione quais programas este cliente tem permissão para instalar no Hub:</label>
+        <div id="entitlementsAppsList" style="background: var(--bg-hover); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+          <!-- Lista carregada via JS -->
+        </div>
+      </div>
+      <small style="color: var(--text-muted); font-size: 0.75rem; display: block; margin-bottom: 1.5rem;">
+        * Se nenhum app estiver marcado, por padrão o cliente terá acesso a todos os programas ativos (compatibilidade).
+      </small>
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" onclick="closeEntitlementsModal()" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" class="btn btn-primary">💾 Salvar Permissões do Cliente</button>
       </div>
     </form>
   </div>
@@ -1211,6 +1277,7 @@
         if (loggedRole === 'admin') {
           actionBtns = `
             <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px; flex-wrap: nowrap;">
+              <button onclick="openEntitlementsModal('${lic.uuid}', '${escapeHtml(lic.company_name)}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" title="Configurar softwares contratados pelo cliente no Hub">🛒 Apps</button>
               <button onclick="openEditModal('${lic.uuid}', '${escapeHtml(lic.company_name)}', '${lic.valid_until}', ${isLifetime ? 'true' : 'false'}, '${lic.status || 'active'}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">Editar</button>
               <button onclick="deleteLicense('${lic.uuid}')" class="btn btn-danger" style="padding: 4px 10px; font-size: 0.8rem;">Excluir</button>
             </div>
@@ -1218,6 +1285,7 @@
         } else if (loggedRole === 'operator') {
           actionBtns = `
             <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px; flex-wrap: nowrap;">
+              <button onclick="openEntitlementsModal('${lic.uuid}', '${escapeHtml(lic.company_name)}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" title="Configurar softwares contratados pelo cliente no Hub">🛒 Apps</button>
               <button onclick="openEditModal('${lic.uuid}', '${escapeHtml(lic.company_name)}', '${lic.valid_until}', ${isLifetime ? 'true' : 'false'}, '${lic.status || 'active'}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">Editar</button>
             </div>
           `;
@@ -1666,10 +1734,13 @@
         }
 
         const formattedDate = new Date(rel.created_at).toLocaleString('pt-BR');
+        const appNameDisplay = rel.name ? `${escapeHtml(rel.name)} <br><small style="color: var(--text-muted); font-size: 0.75rem;">ID: ${escapeHtml(rel.app_id)}</small>` : escapeHtml(rel.app_id);
+        const descriptionDisplay = rel.description ? escapeHtml(rel.description) : '-';
 
         return `
           <tr style="border-bottom: 1px solid var(--border-color);">
-            <td style="padding: 0.75rem 1rem;"><strong style="color: var(--text-main); font-size: 0.85rem;">${escapeHtml(rel.app_id)}</strong></td>
+            <td style="padding: 0.75rem 1rem;"><strong style="color: var(--text-main); font-size: 0.85rem;">${appNameDisplay}</strong></td>
+            <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.8rem; max-width: 200px;">${descriptionDisplay}</td>
             <td style="padding: 0.75rem 1rem;"><code style="color: var(--accent-blue); font-weight: 700; font-size: 0.85rem;">v${escapeHtml(rel.version_name)}</code></td>
             <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.85rem;">${rel.version_code}</td>
             <td style="padding: 0.75rem 1rem; color: var(--text-main); font-size: 0.85rem;">${sizeMb}</td>
@@ -1705,14 +1776,16 @@
     if (loggedRole === 'user') return;
 
     const appId = document.getElementById('releaseAppId').value.trim();
+    const appName = document.getElementById('releaseAppName').value.trim();
+    const appDescription = document.getElementById('releaseAppDescription').value.trim();
     const versionName = document.getElementById('releaseVersionName').value.trim();
     const versionCode = document.getElementById('releaseVersionCode').value.trim();
     const fileInput = document.getElementById('releaseFile');
     const releaseNotes = document.getElementById('releaseNotes').value.trim();
     const isMandatory = document.getElementById('releaseIsMandatory').checked;
 
-    if (!appId || !versionName || !versionCode || fileInput.files.length === 0) {
-      alert('Preencha todos os campos obrigatórios e selecione o arquivo executável (.exe).');
+    if (!appId || !appName || !versionName || !versionCode || fileInput.files.length === 0) {
+      alert('Preencha todos os campos obrigatórios (*), incluindo o Nome do App e o executável.');
       return;
     }
 
@@ -1722,6 +1795,8 @@
 
     const formData = new FormData();
     formData.append('app_id', appId);
+    formData.append('name', appName);
+    formData.append('description', appDescription);
     formData.append('version_name', versionName);
     formData.append('version_code', versionCode);
     formData.append('release_notes', releaseNotes);
@@ -1788,4 +1863,80 @@
       alert('Erro ao excluir release.');
     }
   }
+
+  /* =================================================================== */
+  /* GERENCIAMENTO DE PERMISSÕES DE APPS POR CLIENTE (ENTITLEMENTS) */
+  /* =================================================================== */
+
+  async function openEntitlementsModal(uuid, companyName) {
+    document.getElementById('entitlementsClientUuid').value = uuid;
+    document.getElementById('entitlementsClientName').textContent = 'Empresa: ' + companyName + ' (' + uuid + ')';
+    const container = document.getElementById('entitlementsAppsList');
+    container.innerHTML = '<span style="color: var(--text-muted); font-size: 0.8rem;">Carregando aplicativos...</span>';
+    document.getElementById('modalEntitlements').style.display = 'flex';
+
+    try {
+      const res = await fetch(`/api/admin/licenses/${uuid}/entitlements`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!data.success) {
+        container.innerHTML = `<span style="color: #ef4444; font-size: 0.8rem;">Erro: ${data.error}</span>`;
+        return;
+      }
+
+      if (!data.availableApps || data.availableApps.length === 0) {
+        container.innerHTML = '<span style="color: var(--text-muted); font-size: 0.8rem;">Nenhum aplicativo (.exe) cadastrado no sistema ainda. Cadastre-os na aba Atualizações Executáveis.</span>';
+        return;
+      }
+
+      const enabledSet = new Set((data.entitlements || []).filter(e => e.is_enabled === 1).map(e => e.app_id));
+
+      container.innerHTML = data.availableApps.map(app => {
+        const isChecked = enabledSet.has(app.app_id) ? 'checked' : '';
+        return `
+          <label style="display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 6px; background: var(--bg-card); cursor: pointer;">
+            <input type="checkbox" class="entitlement-app-checkbox" value="${escapeHtml(app.app_id)}" ${isChecked} style="width: 18px; height: 18px; cursor: pointer;">
+            <div>
+              <strong style="font-size: 0.85rem; color: var(--text-main); display: block;">${escapeHtml(app.name)} <small style="color: var(--text-muted);">(${escapeHtml(app.app_id)})</small></strong>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(app.description || 'Sem descrição')}</span>
+            </div>
+          </label>
+        `;
+      }).join('');
+    } catch (err) {
+      container.innerHTML = '<span style="color: #ef4444; font-size: 0.8rem;">Erro ao carregar permissões do cliente.</span>';
+    }
+  }
+
+  function closeEntitlementsModal() {
+    document.getElementById('modalEntitlements').style.display = 'none';
+  }
+
+  document.getElementById('entitlementsForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const uuid = document.getElementById('entitlementsClientUuid').value;
+    const checkboxes = document.querySelectorAll('.entitlement-app-checkbox:checked');
+    const enabledAppIds = Array.from(checkboxes).map(cb => cb.value);
+
+    try {
+      const res = await fetch(`/api/admin/licenses/${uuid}/entitlements`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ enabledAppIds })
+      });
+      const data = await res.json();
+      if (data.success) {
+        closeEntitlementsModal();
+        showToast('Permissões de softwares do cliente atualizadas com sucesso!');
+      } else {
+        alert('Erro ao salvar permissões: ' + data.error);
+      }
+    } catch (err) {
+      alert('Erro de conexão ao salvar permissões.');
+    }
+  });
 </script>

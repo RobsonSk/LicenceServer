@@ -8,7 +8,7 @@ import rateLimit from 'express-rate-limit';
 import speakeasy from 'speakeasy';
 import QRCode from 'qrcode';
 import jwt from 'jsonwebtoken';
-import { openDb, hashPassword, verifyPassword, logAccessAttempt, isIpBlocked, blockIp, unblockIp, getBlockedIps, validatePasswordStrength, getUsers, createUser, deleteUser, updateUserByAdmin, enableUserMfa, disableUserMfa, getSystemSettings, updateSystemSettings, getReleases, getReleaseById, getLatestActiveRelease, getReleaseByVersion, createRelease, toggleReleaseActive, deleteRelease } from './db.js';
+import { openDb, hashPassword, verifyPassword, logAccessAttempt, isIpBlocked, blockIp, unblockIp, getBlockedIps, validatePasswordStrength, getUsers, createUser, deleteUser, updateUserByAdmin, enableUserMfa, disableUserMfa, getSystemSettings, updateSystemSettings, getReleases, getReleaseById, getLatestActiveRelease, getReleaseByVersion, createRelease, toggleReleaseActive, deleteRelease, getEntitlementsForClient, setClientEntitlements, getLatestActiveReleasesForClient } from './db.js';
 import { generateAdminToken, authenticateAdminToken, requireRole } from './auth.js';
 import dotenv from 'dotenv';
 
@@ -256,6 +256,65 @@ router.get('/api/validate', handleValidation);
  *  ROTAS PÚBLICAS DE ATUALIZAÇÃO AUTOMÁTICA DE EXECUTÁVEIS (.EXE)
  * ===================================================================
  */
+
+// 0. Catalog Endpoint: POST /api/list-apps (Para Central de Aplicativos instalador.exe / Hub)
+router.post('/api/list-apps', async (req, res) => {
+  const result = await processValidation(req);
+
+  if (result.httpCode !== 200) {
+    logAccessAttempt({
+      ip: getClientIp(req),
+      uuid: req.body?.uuid || req.query?.uuid,
+      apiKeyUsed: req.headers['x-api-key'] || req.headers['api-key'] || req.query?.api_key,
+      reason: `[List Apps Hub] ${result.json.reason}`,
+      endpoint: req.originalUrl || req.path,
+      method: req.method,
+      userAgent: req.headers['user-agent'],
+      statusCode: result.httpCode
+    });
+
+    return res.status(result.httpCode).json({
+      status: 'error',
+      valid: false,
+      message: 'Chave Mestre ou UUID inválidos.'
+    });
+  }
+
+  try {
+    const clientUuid = result.json.uuid;
+    const companyName = result.json.company_name;
+
+    const releases = await getLatestActiveReleasesForClient(clientUuid);
+
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+    const host = req.get('host');
+    const downloadUrl = `${protocol}://${host}/api/download-update`;
+
+    const formattedApps = releases.map(rel => ({
+      app_id: rel.app_id,
+      name: rel.name || rel.app_id,
+      description: rel.description || '',
+      latest_version: rel.version_name,
+      file_size_bytes: rel.file_size_bytes,
+      sha256: rel.sha256_hash,
+      download_url: downloadUrl
+    }));
+
+    return res.json({
+      status: 'ok',
+      valid: true,
+      company_name: companyName,
+      apps: formattedApps
+    });
+  } catch (error) {
+    console.error('Erro ao listar catálogo de aplicativos:', error);
+    return res.status(500).json({
+      status: 'error',
+      valid: false,
+      message: 'Erro interno ao consultar catálogo de aplicativos.'
+    });
+  }
+});
 
 function isNewerVersion(currentVersion, latestVersionName, latestVersionCode) {
   if (!currentVersion) return true;
@@ -1098,7 +1157,7 @@ router.get('/api/admin/releases', authenticateAdminToken, requireRole(['admin', 
 // Upload e cadastro de nova release (.exe) (Admin, Operador)
 router.post('/api/admin/releases', authenticateAdminToken, requireRole(['admin', 'operator']), uploadRelease.single('exe_file'), async (req, res) => {
   try {
-    const { app_id, version_name, version_code, release_notes, is_mandatory } = req.body;
+    const { app_id, name, description, version_name, version_code, release_notes, is_mandatory } = req.body;
 
     if (!app_id || !version_name || !version_code) {
       if (req.file && fs.existsSync(req.file.path)) {
@@ -1122,6 +1181,8 @@ router.post('/api/admin/releases', authenticateAdminToken, requireRole(['admin',
     const newRelease = await createRelease({
       id: releaseId,
       app_id: app_id.trim(),
+      name: name ? name.trim() : app_id.trim(),
+      description: description ? description.trim() : '',
       version_name: version_name.trim(),
       version_code: parseInt(version_code, 10),
       file_path: filePath,
@@ -1165,6 +1226,46 @@ router.delete('/api/admin/releases/:id', authenticateAdminToken, requireRole(['a
       }
     }
     return res.json({ success: true, message: 'Release excluída com sucesso.' });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
+ * ===================================================================
+ *  GERENCIAMENTO DE PERMISSÕES DE APPS POR CLIENTE (ENTITLEMENTS)
+ * ===================================================================
+ */
+
+// Obter permissões (entitlements) de apps de um cliente
+router.get('/api/admin/licenses/:uuid/entitlements', authenticateAdminToken, requireRole(['admin', 'operator', 'user']), async (req, res) => {
+  const { uuid } = req.params;
+  try {
+    const entitlements = await getEntitlementsForClient(uuid);
+    const releases = await getReleases();
+    const appMap = new Map();
+    for (const rel of releases) {
+      if (!appMap.has(rel.app_id)) {
+        appMap.set(rel.app_id, { app_id: rel.app_id, name: rel.name || rel.app_id, description: rel.description || '' });
+      }
+    }
+    const availableApps = Array.from(appMap.values());
+    return res.json({ success: true, entitlements, availableApps });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Salvar/Atualizar permissões (entitlements) de apps de um cliente
+router.post('/api/admin/licenses/:uuid/entitlements', authenticateAdminToken, requireRole(['admin', 'operator']), async (req, res) => {
+  const { uuid } = req.params;
+  const { enabledAppIds } = req.body;
+  if (!Array.isArray(enabledAppIds)) {
+    return res.status(400).json({ success: false, error: 'O parâmetro enabledAppIds deve ser um array.' });
+  }
+  try {
+    const updated = await setClientEntitlements(uuid, enabledAppIds);
+    return res.json({ success: true, entitlements: updated, message: 'Permissões do cliente atualizadas com sucesso!' });
   } catch (error) {
     return res.status(500).json({ success: false, error: error.message });
   }

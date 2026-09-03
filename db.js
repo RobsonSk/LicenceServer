@@ -185,6 +185,8 @@ export async function initDb() {
     CREATE TABLE IF NOT EXISTS app_releases (
       id TEXT PRIMARY KEY,
       app_id TEXT NOT NULL,
+      name TEXT NOT NULL DEFAULT '',
+      description TEXT,
       version_name TEXT NOT NULL,
       version_code INTEGER NOT NULL,
       file_path TEXT NOT NULL,
@@ -197,9 +199,39 @@ export async function initDb() {
     )
   `);
 
+  const releaseCols = await db.all("PRAGMA table_info(app_releases)");
+  const hasNameCol = releaseCols.some(col => col.name === 'name');
+  if (!hasNameCol) {
+    await db.exec("ALTER TABLE app_releases ADD COLUMN name TEXT NOT NULL DEFAULT ''");
+  }
+
+  const hasDescCol = releaseCols.some(col => col.name === 'description');
+  if (!hasDescCol) {
+    await db.exec("ALTER TABLE app_releases ADD COLUMN description TEXT");
+  }
+
+  await db.run("UPDATE app_releases SET name = app_id WHERE name IS NULL OR name = ''");
+
   await db.exec(`
     CREATE INDEX IF NOT EXISTS idx_app_releases_lookup 
     ON app_releases(app_id, is_active, version_code DESC)
+  `);
+
+  // Tabela de Permissões de Aplicativos por Cliente (Entitlements)
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS client_app_entitlements (
+      id TEXT PRIMARY KEY,
+      client_uuid TEXT NOT NULL,
+      app_id TEXT NOT NULL,
+      is_enabled INTEGER DEFAULT 1,
+      created_at TEXT NOT NULL,
+      UNIQUE(client_uuid, app_id)
+    )
+  `);
+
+  await db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_client_entitlements 
+    ON client_app_entitlements(client_uuid, is_enabled)
   `);
 
   return db;
@@ -400,15 +432,18 @@ export async function getReleaseByVersion(appId, versionName) {
   );
 }
 
-export async function createRelease({ id, app_id, version_name, version_code, file_path, sha256_hash, file_size_bytes, release_notes, is_mandatory, is_active = 1 }) {
+export async function createRelease({ id, app_id, name, description, version_name, version_code, file_path, sha256_hash, file_size_bytes, release_notes, is_mandatory, is_active = 1 }) {
   const db = await openDb();
   const createdAt = new Date().toISOString();
   const mandatoryNum = is_mandatory ? 1 : 0;
   const activeNum = is_active ? 1 : 0;
+  const appName = (name && name.trim() !== '') ? name.trim() : app_id;
+  const appDesc = description ? description.trim() : '';
+
   await db.run(
-    `INSERT INTO app_releases (id, app_id, version_name, version_code, file_path, sha256_hash, file_size_bytes, release_notes, is_mandatory, is_active, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [id, app_id, version_name, version_code, file_path, sha256_hash, file_size_bytes, release_notes || '', mandatoryNum, activeNum, createdAt]
+    `INSERT INTO app_releases (id, app_id, name, description, version_name, version_code, file_path, sha256_hash, file_size_bytes, release_notes, is_mandatory, is_active, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [id, app_id, appName, appDesc, version_name, version_code, file_path, sha256_hash, file_size_bytes, release_notes || '', mandatoryNum, activeNum, createdAt]
   );
   return getReleaseById(id);
 }
@@ -429,4 +464,82 @@ export async function deleteRelease(id) {
   await db.run('DELETE FROM app_releases WHERE id = ?', [id]);
   return release;
 }
+
+/**
+ * ===================================================================
+ *  GERENCIAMENTO DE PERMISSÕES DE APPS POR CLIENTE (ENTITLEABLE APPS)
+ * ===================================================================
+ */
+
+export async function getEntitlementsForClient(clientUuid) {
+  const db = await openDb();
+  return db.all(
+    'SELECT * FROM client_app_entitlements WHERE client_uuid = ? ORDER BY app_id ASC',
+    [clientUuid]
+  );
+}
+
+export async function setClientEntitlements(clientUuid, enabledAppIds) {
+  const db = await openDb();
+  const createdAt = new Date().toISOString();
+
+  await db.run('UPDATE client_app_entitlements SET is_enabled = 0 WHERE client_uuid = ?', [clientUuid]);
+
+  for (const appId of enabledAppIds) {
+    const existing = await db.get(
+      'SELECT id FROM client_app_entitlements WHERE client_uuid = ? AND app_id = ?',
+      [clientUuid, appId]
+    );
+
+    if (existing) {
+      await db.run(
+        'UPDATE client_app_entitlements SET is_enabled = 1 WHERE client_uuid = ? AND app_id = ?',
+        [clientUuid, appId]
+      );
+    } else {
+      const entId = crypto.randomUUID ? crypto.randomUUID() : (Date.now() + '-' + Math.random());
+      await db.run(
+        `INSERT INTO client_app_entitlements (id, client_uuid, app_id, is_enabled, created_at)
+         VALUES (?, ?, ?, 1, ?)`,
+        [entId, clientUuid, appId, createdAt]
+      );
+    }
+  }
+
+  return getEntitlementsForClient(clientUuid);
+}
+
+export async function getLatestActiveReleasesForClient(clientUuid) {
+  const db = await openDb();
+
+  const countObj = await db.get(
+    'SELECT COUNT(*) as count FROM client_app_entitlements WHERE client_uuid = ? AND is_enabled = 1',
+    [clientUuid]
+  );
+
+  let releases = [];
+  if (countObj && countObj.count > 0) {
+    releases = await db.all(
+      `SELECT r.* FROM app_releases r
+       INNER JOIN client_app_entitlements e ON r.app_id = e.app_id
+       WHERE e.client_uuid = ? AND e.is_enabled = 1 AND r.is_active = 1
+       ORDER BY r.app_id ASC, r.version_code DESC`,
+      [clientUuid]
+    );
+  } else {
+    releases = await db.all(
+      `SELECT * FROM app_releases WHERE is_active = 1 ORDER BY app_id ASC, version_code DESC`
+    );
+  }
+
+  const appMap = new Map();
+  for (const rel of releases) {
+    if (!appMap.has(rel.app_id)) {
+      appMap.set(rel.app_id, rel);
+    }
+  }
+
+  return Array.from(appMap.values());
+}
+
 
