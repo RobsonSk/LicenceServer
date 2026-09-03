@@ -21,6 +21,12 @@ app.set('trust proxy', 1);
 // Enable CORS for external client applications
 app.use(cors());
 
+// HSTS (HTTP Strict Transport Security) Header para forçar HTTPS e prevenir ataques de downgrade
+app.use((req, res, next) => {
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  next();
+});
+
 // Handlebars view engine setup
 app.engine('handlebars', exphbs.engine({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
