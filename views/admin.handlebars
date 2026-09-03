@@ -34,6 +34,9 @@
   <button id="tabBtnSettings" onclick="switchTab('settings')" style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
     ⚙️ Configurações Globais
   </button>
+  <button id="tabBtnReleases" onclick="switchTab('releases')" style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+    🚀 Atualizações Executáveis
+  </button>
 </div>
 
 <!-- =================================================================== -->
@@ -250,6 +253,45 @@
         </button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- =================================================================== -->
+<!-- ABA 5: ATUALIZAÇÕES EXECUTÁVEIS (.EXE) -->
+<!-- =================================================================== -->
+<div id="tabContentReleases" style="display: none;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <div>
+      <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Atualizações Executáveis (.exe)</h2>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Gerenciamento de versões de programas e executáveis distribuídos para clientes.</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button onclick="fetchReleases()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">🔄 Atualizar Lista</button>
+      <button id="btnOpenReleaseModal" onclick="openReleaseModal()" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+        ➕ Nova Release (.exe)
+      </button>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 0; overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+      <thead>
+        <tr style="background: var(--bg-hover); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+          <th style="padding: 12px 16px;">App ID</th>
+          <th style="padding: 12px 16px;">Versão</th>
+          <th style="padding: 12px 16px;">Código</th>
+          <th style="padding: 12px 16px;">Tamanho</th>
+          <th style="padding: 12px 16px;">Hash SHA-256</th>
+          <th style="padding: 12px 16px;">Obrigatória</th>
+          <th style="padding: 12px 16px;">Status</th>
+          <th style="padding: 12px 16px;">Data de Upload</th>
+          <th style="padding: 12px 16px; text-align: center;">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="releasesTableBody">
+        <tr><td colspan="9" style="padding: 2rem; text-align: center; color: var(--text-muted);">Carregando releases executáveis...</td></tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -497,6 +539,54 @@
   </div>
 </div>
 
+<!-- Modal para Cadastrar Nova Release Executável -->
+<div id="modalRelease" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
+  <div class="card" style="width: 100%; max-width: 540px; margin: 0 1rem; position: relative; max-height: 90vh; overflow-y: auto;">
+    <button type="button" onclick="closeReleaseModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
+    <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+      🚀 Cadastrar Nova Release (.exe)
+    </h3>
+    <form id="releaseForm">
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Identificador do App (App ID) *</label>
+        <input type="text" id="releaseAppId" required placeholder="Ex: AtualizadorSistemas ou PDV" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-bottom: 1rem;">
+        <div style="flex: 1;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Nome da Versão *</label>
+          <input type="text" id="releaseVersionName" required placeholder="Ex: 1.1.0" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
+        </div>
+        <div style="flex: 1;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Código Numérico *</label>
+          <input type="number" id="releaseVersionCode" required placeholder="Ex: 110" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Arquivo Executável (.exe) *</label>
+        <input type="file" id="releaseFile" accept=".exe" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px dashed var(--accent-blue); background: rgba(59,130,246,0.05); color: var(--text-main); cursor: pointer;">
+        <small style="color: var(--text-muted); font-size: 0.75rem; display: block; margin-top: 4px;">O hash SHA-256 e o tamanho em bytes serão calculados automaticamente no upload.</small>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Notas da Versão (Changelog)</label>
+        <textarea id="releaseNotes" rows="3" placeholder="Descreva as correções de bugs, novos recursos e melhorias desta versão..." style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main); font-family: inherit; font-size: 0.85rem;"></textarea>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem;">
+        <input type="checkbox" id="releaseIsMandatory" style="width: 16px; height: 16px; cursor: pointer;">
+        <label for="releaseIsMandatory" style="font-size: 0.85rem; color: var(--text-main); cursor: pointer;">Atualização Obrigatória (impede execução sem atualizar)</label>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" onclick="closeReleaseModal()" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" id="btnSubmitRelease" class="btn btn-primary">📤 Enviar e Cadastrar Release</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
   const token = localStorage.getItem('admin_token');
   const loggedUsername = localStorage.getItem('admin_username') || 'admin';
@@ -522,14 +612,16 @@
     const tabSecurity = document.getElementById('tabContentSecurity');
     const tabUsers = document.getElementById('tabContentUsers');
     const tabSettings = document.getElementById('tabContentSettings');
+    const tabReleases = document.getElementById('tabContentReleases');
 
     const btnLicenses = document.getElementById('tabBtnLicenses');
     const btnSecurity = document.getElementById('tabBtnSecurity');
     const btnUsers = document.getElementById('tabBtnUsers');
     const btnSettings = document.getElementById('tabBtnSettings');
+    const btnReleases = document.getElementById('tabBtnReleases');
 
     // Desativar todas as abas
-    [btnLicenses, btnSecurity, btnUsers, btnSettings].forEach(btn => {
+    [btnLicenses, btnSecurity, btnUsers, btnSettings, btnReleases].forEach(btn => {
       if (btn) {
         btn.style.color = 'var(--text-muted)';
         btn.style.borderBottomColor = 'transparent';
@@ -540,6 +632,7 @@
     if (tabSecurity) tabSecurity.style.display = 'none';
     if (tabUsers) tabUsers.style.display = 'none';
     if (tabSettings) tabSettings.style.display = 'none';
+    if (tabReleases) tabReleases.style.display = 'none';
 
     // Ativar a aba selecionada
     if (tabName === 'licenses') {
@@ -571,6 +664,13 @@
         btnSettings.style.borderBottomColor = '#c084fc';
       }
       fetchSystemSettings();
+    } else if (tabName === 'releases') {
+      if (tabReleases) tabReleases.style.display = 'block';
+      if (btnReleases) {
+        btnReleases.style.color = 'var(--accent-blue)';
+        btnReleases.style.borderBottomColor = 'var(--accent-blue)';
+      }
+      fetchReleases();
     }
   }
 
@@ -587,6 +687,7 @@
 
   function applyRolePermissions(role) {
     const btnAddLicense = document.getElementById('btnAddLicense');
+    const btnOpenReleaseModal = document.getElementById('btnOpenReleaseModal');
     const tabBtnSecurity = document.getElementById('tabBtnSecurity');
     const tabBtnUsers = document.getElementById('tabBtnUsers');
     const tabBtnSettings = document.getElementById('tabBtnSettings');
@@ -597,12 +698,14 @@
       if (tabBtnUsers) tabBtnUsers.style.display = 'flex';
       if (tabBtnSettings) tabBtnSettings.style.display = 'flex';
       if (btnAddLicense) btnAddLicense.style.display = 'inline-block';
+      if (btnOpenReleaseModal) btnOpenReleaseModal.style.display = 'inline-flex';
       if (btnClearLogs) btnClearLogs.style.display = 'inline-block';
     } else if (role === 'operator') {
       if (tabBtnSecurity) tabBtnSecurity.style.display = 'flex';
       if (tabBtnUsers) tabBtnUsers.style.display = 'none';
       if (tabBtnSettings) tabBtnSettings.style.display = 'none';
       if (btnAddLicense) btnAddLicense.style.display = 'inline-block';
+      if (btnOpenReleaseModal) btnOpenReleaseModal.style.display = 'inline-flex';
       if (btnClearLogs) btnClearLogs.style.display = 'none';
     } else {
       // Perfil 'user' (Somente Leitura)
@@ -610,6 +713,7 @@
       if (tabBtnUsers) tabBtnUsers.style.display = 'none';
       if (tabBtnSettings) tabBtnSettings.style.display = 'none';
       if (btnAddLicense) btnAddLicense.style.display = 'none';
+      if (btnOpenReleaseModal) btnOpenReleaseModal.style.display = 'none';
     }
 
     switchTab('licenses');
@@ -1516,6 +1620,172 @@
       }
     } catch (err) {
       alert('Erro ao desbloquear IP.');
+    }
+  }
+
+  /* =================================================================== */
+  /* GERENCIAMENTO DE RELEASES EXECUTÁVEIS (.EXE) */
+  /* =================================================================== */
+
+  async function fetchReleases() {
+    try {
+      const res = await fetch('/api/admin/releases', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      const tbody = document.getElementById('releasesTableBody');
+
+      if (!data.releases || data.releases.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="padding: 2rem; text-align: center; color: var(--text-muted);">Nenhuma release (.exe) cadastrada até o momento.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = data.releases.map(rel => {
+        const isActive = Number(rel.is_active) === 1;
+        const isMandatory = Number(rel.is_mandatory) === 1;
+
+        const sizeMb = (rel.file_size_bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        const hashShort = rel.sha256_hash ? rel.sha256_hash.substring(0, 12) + '...' : '-';
+
+        const statusBadge = isActive
+          ? '<span style="background: rgba(34, 197, 94, 0.15); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">🟢 Ativa</span>'
+          : '<span style="background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">🔴 Inativa</span>';
+
+        const mandatoryBadge = isMandatory
+          ? '<span style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">⚠️ Sim</span>'
+          : '<span style="color: var(--text-muted); font-size: 0.8rem;">Não</span>';
+
+        let actionBtns = '';
+        if (loggedRole === 'admin' || loggedRole === 'operator') {
+          const toggleText = isActive ? 'Desativar' : 'Ativar';
+          const toggleClass = isActive ? 'btn-secondary' : 'btn-primary';
+          actionBtns += `<button onclick="toggleReleaseAction('${rel.id}')" class="btn ${toggleClass}" style="padding: 4px 8px; font-size: 0.75rem;">${toggleText}</button> `;
+        }
+        if (loggedRole === 'admin') {
+          actionBtns += `<button onclick="deleteReleaseAction('${rel.id}')" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;">Excluir</button>`;
+        }
+
+        const formattedDate = new Date(rel.created_at).toLocaleString('pt-BR');
+
+        return `
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 0.75rem 1rem;"><strong style="color: var(--text-main); font-size: 0.85rem;">${escapeHtml(rel.app_id)}</strong></td>
+            <td style="padding: 0.75rem 1rem;"><code style="color: var(--accent-blue); font-weight: 700; font-size: 0.85rem;">v${escapeHtml(rel.version_name)}</code></td>
+            <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.85rem;">${rel.version_code}</td>
+            <td style="padding: 0.75rem 1rem; color: var(--text-main); font-size: 0.85rem;">${sizeMb}</td>
+            <td style="padding: 0.75rem 1rem;"><code style="color: var(--text-muted); font-size: 0.75rem;" title="${escapeHtml(rel.sha256_hash)}">${hashShort}</code></td>
+            <td style="padding: 0.75rem 1rem;">${mandatoryBadge}</td>
+            <td style="padding: 0.75rem 1rem;">${statusBadge}</td>
+            <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.75rem;">${formattedDate}</td>
+            <td style="padding: 0.75rem 1rem; text-align: center;">
+              <div style="display: flex; justify-content: center; gap: 4px;">
+                ${actionBtns || '<span style="color: var(--text-muted); font-size: 0.75rem;">-</span>'}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    } catch (err) {
+      console.error('Erro ao buscar releases:', err);
+    }
+  }
+
+  function openReleaseModal() {
+    if (loggedRole === 'user') return;
+    document.getElementById('releaseForm').reset();
+    document.getElementById('modalRelease').style.display = 'flex';
+  }
+
+  function closeReleaseModal() {
+    document.getElementById('modalRelease').style.display = 'none';
+  }
+
+  document.getElementById('releaseForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (loggedRole === 'user') return;
+
+    const appId = document.getElementById('releaseAppId').value.trim();
+    const versionName = document.getElementById('releaseVersionName').value.trim();
+    const versionCode = document.getElementById('releaseVersionCode').value.trim();
+    const fileInput = document.getElementById('releaseFile');
+    const releaseNotes = document.getElementById('releaseNotes').value.trim();
+    const isMandatory = document.getElementById('releaseIsMandatory').checked;
+
+    if (!appId || !versionName || !versionCode || fileInput.files.length === 0) {
+      alert('Preencha todos os campos obrigatórios e selecione o arquivo executável (.exe).');
+      return;
+    }
+
+    const btnSubmit = document.getElementById('btnSubmitRelease');
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = '⏳ Enviando arquivo...';
+
+    const formData = new FormData();
+    formData.append('app_id', appId);
+    formData.append('version_name', versionName);
+    formData.append('version_code', versionCode);
+    formData.append('release_notes', releaseNotes);
+    formData.append('is_mandatory', isMandatory ? 'true' : 'false');
+    formData.append('exe_file', fileInput.files[0]);
+
+    try {
+      const res = await fetch('/api/admin/releases', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        closeReleaseModal();
+        showToast('Release (.exe) cadastrada e enviada com sucesso!');
+        fetchReleases();
+      } else {
+        alert('Erro ao enviar release: ' + data.error);
+      }
+    } catch (err) {
+      alert('Erro de conexão ao enviar arquivo executável.');
+    } finally {
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = '📤 Enviar e Cadastrar Release';
+    }
+  });
+
+  async function toggleReleaseAction(id) {
+    if (loggedRole === 'user') return;
+    try {
+      const res = await fetch(`/api/admin/releases/${id}/toggle`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Status da release alterado!');
+        fetchReleases();
+      } else {
+        alert('Erro: ' + data.error);
+      }
+    } catch (err) {
+      alert('Erro ao alterar status da release.');
+    }
+  }
+
+  async function deleteReleaseAction(id) {
+    if (loggedRole !== 'admin') return;
+    if (!confirm('Deseja realmente excluir esta release? O arquivo executável (.exe) será removido do servidor.')) return;
+    try {
+      const res = await fetch(`/api/admin/releases/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Release e arquivo excluídos com sucesso!');
+        fetchReleases();
+      } else {
+        alert('Erro: ' + data.error);
+      }
+    } catch (err) {
+      alert('Erro ao excluir release.');
     }
   }
 </script>

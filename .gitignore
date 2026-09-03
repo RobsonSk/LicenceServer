@@ -34,6 +34,7 @@ yarn-error.log*
 
 # Pasta de arquivos e documentações internas temporárias
 ignore/
+storage/
 
 # Arquivos do Sistema Operacional e IDEs
 .DS_Store

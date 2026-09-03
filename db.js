@@ -180,6 +180,28 @@ export async function initDb() {
 
   await db.run("INSERT OR IGNORE INTO system_settings (key, value) VALUES ('require_mfa_all', '0')");
 
+  // Tabela de Releases do Aplicativo (Atualizações Executáveis .exe)
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS app_releases (
+      id TEXT PRIMARY KEY,
+      app_id TEXT NOT NULL,
+      version_name TEXT NOT NULL,
+      version_code INTEGER NOT NULL,
+      file_path TEXT NOT NULL,
+      sha256_hash TEXT NOT NULL,
+      file_size_bytes INTEGER NOT NULL,
+      release_notes TEXT,
+      is_mandatory INTEGER DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      created_at TEXT NOT NULL
+    )
+  `);
+
+  await db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_app_releases_lookup 
+    ON app_releases(app_id, is_active, version_code DESC)
+  `);
+
   return db;
 }
 
@@ -345,3 +367,66 @@ export async function updateSystemSettings({ require_mfa_all }) {
   await db.run("INSERT OR REPLACE INTO system_settings (key, value) VALUES ('require_mfa_all', ?)", [valStr]);
   return getSystemSettings();
 }
+
+/**
+ * ===================================================================
+ *  GERENCIAMENTO DE RELEASES / ATUALIZAÇÕES EXECUÁVEIS (.EXE)
+ * ===================================================================
+ */
+
+export async function getReleases() {
+  const db = await openDb();
+  return db.all('SELECT * FROM app_releases ORDER BY created_at DESC');
+}
+
+export async function getReleaseById(id) {
+  const db = await openDb();
+  return db.get('SELECT * FROM app_releases WHERE id = ?', [id]);
+}
+
+export async function getLatestActiveRelease(appId) {
+  const db = await openDb();
+  return db.get(
+    'SELECT * FROM app_releases WHERE app_id = ? AND is_active = 1 ORDER BY version_code DESC LIMIT 1',
+    [appId]
+  );
+}
+
+export async function getReleaseByVersion(appId, versionName) {
+  const db = await openDb();
+  return db.get(
+    'SELECT * FROM app_releases WHERE app_id = ? AND version_name = ? AND is_active = 1',
+    [appId, versionName]
+  );
+}
+
+export async function createRelease({ id, app_id, version_name, version_code, file_path, sha256_hash, file_size_bytes, release_notes, is_mandatory, is_active = 1 }) {
+  const db = await openDb();
+  const createdAt = new Date().toISOString();
+  const mandatoryNum = is_mandatory ? 1 : 0;
+  const activeNum = is_active ? 1 : 0;
+  await db.run(
+    `INSERT INTO app_releases (id, app_id, version_name, version_code, file_path, sha256_hash, file_size_bytes, release_notes, is_mandatory, is_active, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [id, app_id, version_name, version_code, file_path, sha256_hash, file_size_bytes, release_notes || '', mandatoryNum, activeNum, createdAt]
+  );
+  return getReleaseById(id);
+}
+
+export async function toggleReleaseActive(id) {
+  const db = await openDb();
+  const release = await db.get('SELECT is_active FROM app_releases WHERE id = ?', [id]);
+  if (!release) throw new Error('Release não encontrada.');
+  const newStatus = release.is_active === 1 ? 0 : 1;
+  await db.run('UPDATE app_releases SET is_active = ? WHERE id = ?', [newStatus, id]);
+  return getReleaseById(id);
+}
+
+export async function deleteRelease(id) {
+  const db = await openDb();
+  const release = await db.get('SELECT * FROM app_releases WHERE id = ?', [id]);
+  if (!release) throw new Error('Release não encontrada.');
+  await db.run('DELETE FROM app_releases WHERE id = ?', [id]);
+  return release;
+}
+

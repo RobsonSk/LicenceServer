@@ -1,11 +1,14 @@
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
+import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
 import rateLimit from 'express-rate-limit';
 import speakeasy from 'speakeasy';
 import QRCode from 'qrcode';
 import jwt from 'jsonwebtoken';
-import { openDb, hashPassword, verifyPassword, logAccessAttempt, isIpBlocked, blockIp, unblockIp, getBlockedIps, validatePasswordStrength, getUsers, createUser, deleteUser, updateUserByAdmin, enableUserMfa, disableUserMfa, getSystemSettings, updateSystemSettings } from './db.js';
+import { openDb, hashPassword, verifyPassword, logAccessAttempt, isIpBlocked, blockIp, unblockIp, getBlockedIps, validatePasswordStrength, getUsers, createUser, deleteUser, updateUserByAdmin, enableUserMfa, disableUserMfa, getSystemSettings, updateSystemSettings, getReleases, getReleaseById, getLatestActiveRelease, getReleaseByVersion, createRelease, toggleReleaseActive, deleteRelease } from './db.js';
 import { generateAdminToken, authenticateAdminToken, requireRole } from './auth.js';
 import dotenv from 'dotenv';
 
@@ -246,6 +249,172 @@ async function handleValidation(req, res) {
 
 router.post('/api/validate', handleValidation);
 router.get('/api/validate', handleValidation);
+
+/**
+ * ===================================================================
+ *  ROTAS PÚBLICAS DE ATUALIZAÇÃO AUTOMÁTICA DE EXECUTÁVEIS (.EXE)
+ * ===================================================================
+ */
+
+function isNewerVersion(currentVersion, latestVersionName, latestVersionCode) {
+  if (!currentVersion) return true;
+  if (currentVersion === latestVersionName) return false;
+
+  const cleanCurrent = currentVersion.replace(/[^0-9.]/g, '');
+  const cleanLatest = latestVersionName.replace(/[^0-9.]/g, '');
+
+  const partsCurrent = cleanCurrent.split('.').map(n => parseInt(n, 10) || 0);
+  const partsLatest = cleanLatest.split('.').map(n => parseInt(n, 10) || 0);
+
+  const maxLen = Math.max(partsCurrent.length, partsLatest.length);
+  for (let i = 0; i < maxLen; i++) {
+    const c = partsCurrent[i] || 0;
+    const l = partsLatest[i] || 0;
+    if (l > c) return true;
+    if (c > l) return false;
+  }
+
+  return false;
+}
+
+// 1. Endpoint Check Update: POST /api/check-update
+router.post('/api/check-update', async (req, res) => {
+  const result = await processValidation(req);
+
+  if (result.httpCode !== 200) {
+    logAccessAttempt({
+      ip: getClientIp(req),
+      uuid: req.body?.uuid || req.query?.uuid,
+      apiKeyUsed: req.headers['x-api-key'] || req.headers['api-key'] || req.query?.api_key,
+      reason: `[Check Update] ${result.json.reason}`,
+      endpoint: req.originalUrl || req.path,
+      method: req.method,
+      userAgent: req.headers['user-agent'],
+      statusCode: result.httpCode
+    });
+
+    return res.status(result.httpCode).json({
+      status: 'error',
+      valid: false,
+      message: 'Licença inválida, expirada ou HWID não autorizado.'
+    });
+  }
+
+  const { app_id, current_version } = req.body;
+
+  if (!app_id) {
+    return res.status(400).json({
+      status: 'error',
+      valid: false,
+      message: 'Parâmetro app_id é obrigatório.'
+    });
+  }
+
+  try {
+    const latestRelease = await getLatestActiveRelease(app_id);
+
+    if (!latestRelease) {
+      return res.json({
+        status: 'ok',
+        valid: true,
+        has_update: false,
+        message: 'Nenhuma versão encontrada para este aplicativo.'
+      });
+    }
+
+    const hasUpdate = isNewerVersion(current_version, latestRelease.version_name, latestRelease.version_code);
+
+    if (hasUpdate) {
+      const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+      const host = req.get('host');
+      const downloadUrl = `${protocol}://${host}/api/download-update`;
+
+      return res.json({
+        status: 'ok',
+        valid: true,
+        has_update: true,
+        latest_version: latestRelease.version_name,
+        sha256: latestRelease.sha256_hash,
+        file_size_bytes: latestRelease.file_size_bytes,
+        mandatory: Boolean(latestRelease.is_mandatory),
+        download_url: downloadUrl,
+        release_notes: latestRelease.release_notes,
+        created_at: latestRelease.created_at
+      });
+    }
+
+    return res.json({
+      status: 'ok',
+      valid: true,
+      has_update: false,
+      latest_version: current_version || latestRelease.version_name,
+      message: 'O aplicativo já está na versão mais recente.'
+    });
+  } catch (error) {
+    console.error('Erro ao verificar atualização:', error);
+    return res.status(500).json({
+      status: 'error',
+      valid: false,
+      message: 'Erro interno ao consultar atualizações.'
+    });
+  }
+});
+
+// 2. Endpoint Download Binary: POST /api/download-update
+router.post('/api/download-update', async (req, res) => {
+  const result = await processValidation(req);
+
+  if (result.httpCode !== 200) {
+    logAccessAttempt({
+      ip: getClientIp(req),
+      uuid: req.body?.uuid || req.query?.uuid,
+      apiKeyUsed: req.headers['x-api-key'] || req.headers['api-key'] || req.query?.api_key,
+      reason: `[Download Update] ${result.json.reason}`,
+      endpoint: req.originalUrl || req.path,
+      method: req.method,
+      userAgent: req.headers['user-agent'],
+      statusCode: result.httpCode
+    });
+
+    return res.status(403).json({ error: 'Acesso negado.' });
+  }
+
+  const { app_id, target_version } = req.body;
+
+  if (!app_id) {
+    return res.status(400).json({ error: 'Parâmetro app_id é obrigatório.' });
+  }
+
+  try {
+    let release;
+    if (target_version) {
+      release = await getReleaseByVersion(app_id, target_version);
+    } else {
+      release = await getLatestActiveRelease(app_id);
+    }
+
+    if (!release || !fs.existsSync(release.file_path)) {
+      return res.status(404).json({ error: 'Arquivo do executável não encontrado no servidor.' });
+    }
+
+    const filename = `${app_id}-v${release.version_name}.exe`;
+
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Length', release.file_size_bytes);
+    res.setHeader('X-SHA256-Checksum', release.sha256_hash);
+    res.setHeader('Cache-Control', 'no-cache, private');
+
+    const readStream = fs.createReadStream(release.file_path);
+    readStream.pipe(res);
+  } catch (error) {
+    console.error('Erro ao transmitir executável:', error);
+    if (!res.headersSent) {
+      return res.status(500).json({ error: 'Erro interno ao realizar download do arquivo.' });
+    }
+  }
+});
+
 
 
 /**
@@ -883,6 +1052,118 @@ router.put('/api/admin/settings', authenticateAdminToken, requireRole(['admin'])
   try {
     const updatedSettings = await updateSystemSettings({ require_mfa_all: !!require_mfa_all });
     return res.json({ success: true, settings: updatedSettings, message: 'Configurações globais salvas com sucesso.' });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
+ * ===================================================================
+ *  GERENCIAMENTO DE RELEASES / EXECUTÁVEIS (.EXE) (Admin, Operador)
+ * ===================================================================
+ */
+
+const releasesStorageDir = path.resolve(process.env.RELEASES_DIR || './storage/releases');
+if (!fs.existsSync(releasesStorageDir)) {
+  fs.mkdirSync(releasesStorageDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, releasesStorageDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname) || '.exe';
+    cb(null, `release-${uniqueSuffix}${ext}`);
+  }
+});
+
+const uploadRelease = multer({
+  storage,
+  limits: { fileSize: 500 * 1024 * 1024 } // Limite: 500MB
+});
+
+// Listar todas as releases (Admin, Operador, Usuário)
+router.get('/api/admin/releases', authenticateAdminToken, requireRole(['admin', 'operator', 'user']), async (req, res) => {
+  try {
+    const list = await getReleases();
+    return res.json({ success: true, releases: list });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Upload e cadastro de nova release (.exe) (Admin, Operador)
+router.post('/api/admin/releases', authenticateAdminToken, requireRole(['admin', 'operator']), uploadRelease.single('exe_file'), async (req, res) => {
+  try {
+    const { app_id, version_name, version_code, release_notes, is_mandatory } = req.body;
+
+    if (!app_id || !version_name || !version_code) {
+      if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
+      return res.status(400).json({ success: false, error: 'App ID, Nome da Versão e Código Numérico da Versão são obrigatórios.' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'Nenhum arquivo executável (.exe) foi enviado.' });
+    }
+
+    const filePath = req.file.path;
+    const fileSize = req.file.size;
+
+    // Calcular Hash SHA-256 do arquivo executável enviado
+    const fileBuffer = fs.readFileSync(filePath);
+    const sha256Hash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
+
+    const releaseId = uuidv4();
+    const newRelease = await createRelease({
+      id: releaseId,
+      app_id: app_id.trim(),
+      version_name: version_name.trim(),
+      version_code: parseInt(version_code, 10),
+      file_path: filePath,
+      sha256_hash: sha256Hash,
+      file_size_bytes: fileSize,
+      release_notes: release_notes ? release_notes.trim() : '',
+      is_mandatory: is_mandatory === 'true' || is_mandatory === true || is_mandatory === '1' || is_mandatory === 1,
+      is_active: 1
+    });
+
+    return res.status(201).json({ success: true, release: newRelease });
+  } catch (error) {
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Ativar/Desativar release (Admin, Operador)
+router.put('/api/admin/releases/:id/toggle', authenticateAdminToken, requireRole(['admin', 'operator']), async (req, res) => {
+  const { id } = req.params;
+  try {
+    const updated = await toggleReleaseActive(id);
+    return res.json({ success: true, release: updated });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Excluir release e remover arquivo do disco (Apenas Admin)
+router.delete('/api/admin/releases/:id', authenticateAdminToken, requireRole(['admin']), async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleted = await deleteRelease(id);
+    if (deleted && deleted.file_path && fs.existsSync(deleted.file_path)) {
+      try {
+        fs.unlinkSync(deleted.file_path);
+      } catch (err) {
+        console.error('Erro ao deletar arquivo .exe do disco:', err);
+      }
+    }
+    return res.json({ success: true, message: 'Release excluída com sucesso.' });
   } catch (error) {
     return res.status(500).json({ success: false, error: error.message });
   }

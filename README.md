@@ -1,6 +1,6 @@
-# 🔒 License Server — Servidor de Licenciamento de Software
+# 🔒 License Server — Servidor de Licenciamento de Software & Atualizações Executáveis
 
-Servidor de validação e gerenciamento de licenças de software desenvolvido em **Node.js** com **Express** e **SQLite3**. Possui suporte nativo para **Hardware Binding (HWID)**, autenticação via **UUID** e **X-API-Key** única, controle de acesso de operadores com **MFA (2FA)** e painel administrativo web em Handlebars.
+Servidor de validação, gerenciamento de licenças de software e distribuição de atualizações automáticas de executáveis (`.exe`) desenvolvido em **Node.js** com **Express** e **SQLite3**. Possui suporte nativo para **Hardware Binding (HWID)**, autenticação via **UUID** e **X-API-Key** única, verificação/download de versões de `.exe`, controle de acesso de operadores com **MFA (2FA)** e painel administrativo web em Handlebars.
 
 ---
 
@@ -11,6 +11,10 @@ Servidor de validação e gerenciamento de licenças de software desenvolvido em
   - Checagem de validade (data de expiração ou licença vitalícia).
   - Status ativo/revogado.
 
+- **Sistema de Atualização Automática de Executáveis (`.exe`)**:
+  - **Endpoint de Verificação (`POST /api/check-update`)**: Consulta a versão mais recente cadastrada para o aplicativo (`app_id`), retornando status de atualização, notas de versão (changelog), hash SHA-256 e se a atualização é obrigatória (`mandatory`).
+  - **Endpoint de Download Seguro (`POST /api/download-update`)**: Transmite o binário `.exe` compilado em streaming com validação de licença, suporte a checksum SHA-256 no header HTTP e isolamento de arquivos.
+
 - **Trava de Hardware ID (HWID)**:
   - **Auto-vinculação no 1º uso**: O servidor vincula automaticamente a máquina física no primeiro acesso do cliente `.exe`.
   - **Proteção contra Clonagem**: Bloqueia requisições sem HWID ou oriundas de máquinas não autorizadas (`HTTP 401`).
@@ -18,6 +22,7 @@ Servidor de validação e gerenciamento de licenças de software desenvolvido em
 
 - **Painel Administrativo Web (`/admin`)**:
   - Gerenciamento completo de licenças (Criação, Edição, Revogação e Reset de HWID).
+  - Aba **Atualizações Executáveis**: Upload seguro de arquivos `.exe` com geração automática de SHA-256, controle de obrigatoriedade e ativação/desativação de releases.
   - Gestão de usuários administrativos (Funções: Admin e Operador).
   - Suporte a Autenticação de Dois Fatores (**MFA/2FA via TOTP**).
   - Logs de tentativas de acesso não autorizadas e bloqueio automático de IP (Anti Brute-force / Rate Limiting).
@@ -70,6 +75,9 @@ LICENSE_SERVER_URL=http://localhost:8443
 
 # Caminho do banco de dados SQLite
 DATABASE_PATH=./licenses.db
+
+# Diretório para armazenamento dos arquivos executáveis (.exe)
+RELEASES_DIR=./storage/releases
 ```
 
 ---
@@ -81,7 +89,7 @@ Para iniciar o servidor:
 ```bash
 npm start
 ```
-*O banco de dados SQLite (`licenses.db`) será criado e inicializado automaticamente na primeira execução.*
+*O banco de dados SQLite (`licenses.db`) e o diretório de armazenamento (`./storage/releases/`) serão criados e inicializados automaticamente na primeira execução.*
 
 Acesse no navegador:
 - **Painel Administrativo**: [http://localhost:8443/admin](http://localhost:8443/admin)
@@ -89,26 +97,17 @@ Acesse no navegador:
 
 ---
 
-## 🧪 Testes e Validação da API
+## 🧪 Testes e Especificações das APIs
 
-Para testar o fluxo completo de validação e a obrigatoriedade do **HWID**:
+### 1. Validação de Licença (`POST /api/validate`)
 
-### Executar Script de Teste Automatizado
-```bash
-bash test_hwid_curls.sh
-```
-
-### Exemplo de Requisição de Validação pelo Cliente (`.exe`)
-
-**Endpoint:** `POST /api/validate`
-
-**Cabeçalhos:**
+**Headers:**
 ```http
 Content-Type: application/json
 X-API-Key: SUA_X_API_KEY
 ```
 
-**Corpo da Requisição (JSON):**
+**Body (JSON):**
 ```json
 {
   "uuid": "ce4b7a12-88f1-4b10-a982-123456789abc",
@@ -116,18 +115,64 @@ X-API-Key: SUA_X_API_KEY
 }
 ```
 
-**Resposta de Sucesso (HTTP 200):**
+---
+
+### 2. Verificação de Atualização (`POST /api/check-update`)
+
+**Headers:**
+```http
+Content-Type: application/json
+X-API-Key: SUA_X_API_KEY
+```
+
+**Body (JSON):**
+```json
+{
+  "uuid": "ce4b7a12-88f1-4b10-a982-123456789abc",
+  "hwid": "a8f3b912c0194821a8f92138e0",
+  "app_id": "AtualizadorSistemas",
+  "current_version": "1.0.0"
+}
+```
+
+**Resposta com Nova Versão Disponível (HTTP 200):**
 ```json
 {
   "status": "ok",
   "valid": true,
-  "company_name": "Empresa Exemplo",
-  "validUntil": "2030-12-31T23:59:59.000Z",
-  "is_lifetime": false,
-  "uuid": "ce4b7a12-88f1-4b10-a982-123456789abc",
-  "hwid": "a8f3b912c0194821a8f92138e0"
+  "has_update": true,
+  "latest_version": "1.1.0",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "file_size_bytes": 28410294,
+  "mandatory": true,
+  "download_url": "http://localhost:8443/api/download-update",
+  "release_notes": "Correção de bugs e melhorias de performance."
 }
 ```
+
+---
+
+### 3. Download do Executável (`POST /api/download-update`)
+
+**Headers:**
+```http
+Content-Type: application/json
+X-API-Key: SUA_X_API_KEY
+```
+
+**Body (JSON):**
+```json
+{
+  "uuid": "ce4b7a12-88f1-4b10-a982-123456789abc",
+  "hwid": "a8f3b912c0194821a8f92138e0",
+  "app_id": "AtualizadorSistemas",
+  "target_version": "1.1.0"
+}
+```
+
+**Response (Binary Stream Success - HTTP 200):**
+- Headers: `Content-Type: application/octet-stream`, `X-SHA256-Checksum`, `Content-Disposition: attachment; filename="AtualizadorSistemas-v1.1.0.exe"`
+- Body: Conteúdo binário bruto do executável.
 
 ---
 
@@ -136,9 +181,10 @@ X-API-Key: SUA_X_API_KEY
 ```text
 License-Server/
 ├── auth.js               # Middleware de autenticação JWT e controle de roles
-├── db.js                 # Inicialização do banco de dados SQLite e utilitários
-├── routes.js             # Rotas principais da API (/api/validate, admin e auth)
+├── db.js                 # Inicialização do banco de dados SQLite e CRUDs (licenças e releases)
+├── routes.js             # Rotas da API (/api/validate, /api/check-update, /api/download-update, admin)
 ├── server.js             # Ponto de entrada do aplicativo (Servidor HTTP/HTTPS)
+├── storage/releases/     # Diretório isolado para armazenamento dos executáveis (.exe)
 ├── test_hwid_curls.sh    # Script Bash com cURLs para teste local
 ├── views/                # Interface Web do Painel Admin (Handlebars)
 ├── .env.example          # Modelo de arquivo de ambiente
