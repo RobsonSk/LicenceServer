@@ -17,24 +17,31 @@
   </div>
 </div>
 
-<div id="toast" style="display: none; position: fixed; top: 20px; right: 20px; background: var(--accent-green); color: #000; padding: 12px 20px; border-radius: 8px; font-weight: 600; box-shadow: var(--shadow); z-index: 1000;">
+<div id="toast"
+  style="display: none; position: fixed; top: 20px; right: 20px; background: var(--accent-green); color: #000; padding: 12px 20px; border-radius: 8px; font-weight: 600; box-shadow: var(--shadow); z-index: 1000;">
 </div>
 
 <!-- Barra de Navegação por Abas (Tabs) -->
-<div style="display: flex; gap: 8px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0px;">
-  <button id="tabBtnLicenses" onclick="switchTab('licenses')" style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--accent-blue); border-bottom: 2px solid var(--accent-blue); cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+<div
+  style="display: flex; gap: 8px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0px;">
+  <button id="tabBtnLicenses" onclick="switchTab('licenses')"
+    style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--accent-blue); border-bottom: 2px solid var(--accent-blue); cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
     📜 Licenças
   </button>
-  <button id="tabBtnSecurity" onclick="switchTab('security')" style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+  <button id="tabBtnSecurity" onclick="switchTab('security')"
+    style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
     🛡️ Segurança & IPs Bloqueados
   </button>
-  <button id="tabBtnUsers" onclick="switchTab('users')" style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+  <button id="tabBtnUsers" onclick="switchTab('users')"
+    style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
     👥 Gestão de Usuários
   </button>
-  <button id="tabBtnSettings" onclick="switchTab('settings')" style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+  <button id="tabBtnSettings" onclick="switchTab('settings')"
+    style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
     ⚙️ Configurações Globais
   </button>
-  <button id="tabBtnReleases" onclick="switchTab('releases')" style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+  <button id="tabBtnReleases" onclick="switchTab('releases')"
+    style="padding: 10px 18px; font-weight: 600; font-size: 0.95rem; border: none; background: transparent; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
     Atualizações Executáveis
   </button>
 </div>
@@ -46,13 +53,15 @@
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
     <div>
       <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Licenças Cadastradas</h2>
-      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Lista de licenças ativas, expiradas e revogadas com UUIDs e X-API-Keys de conexão.</p>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Lista de licenças ativas, expiradas e
+        revogadas com UUIDs e X-API-Keys de conexão.</p>
     </div>
     <div style="display: flex; gap: 8px;">
       <button onclick="fetchLicenses()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">
         Atualizar Licenças
       </button>
-      <button id="btnAddLicense" onclick="openAddModal()" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">
+      <button id="btnAddLicense" onclick="openAddModal()" class="btn btn-primary"
+        style="padding: 6px 12px; font-size: 0.8rem;">
         + Nova Licença
       </button>
     </div>
@@ -60,22 +69,24 @@
 
   <div class="card" style="padding: 0; overflow: hidden;">
     <div style="overflow-x: auto;">
-      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
         <thead>
-          <tr style="background-color: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
-            <th style="padding: 1rem;">Nome / Identificação</th>
-            <th style="padding: 1rem;">UUID de Validação</th>
-            <th style="padding: 1rem;">X-API-Key (Cabeçalho)</th>
-            <th style="padding: 1rem;">Hardware (HWID)</th>
-            <th style="padding: 1rem;">Status</th>
-            <th style="padding: 1rem;">Validade</th>
-            <th style="padding: 1rem;">Cadastrado por</th>
-            <th style="padding: 1rem; text-align: right;">Ações</th>
+          <tr
+            style="background-color: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+            <th style="padding: 0.75rem 0.6rem;">Nome / Identificação</th>
+            <th style="padding: 0.75rem 0.6rem;">UUID de Validação</th>
+            <th style="padding: 0.75rem 0.6rem;">X-API-Key (Cabeçalho)</th>
+            <th style="padding: 0.75rem 0.6rem;">Hardware (HWID)</th>
+            <th style="padding: 0.75rem 0.6rem;">Status</th>
+            <th style="padding: 0.75rem 0.6rem;">Validade</th>
+            <th style="padding: 0.75rem 0.6rem;">Cadastrado por</th>
+            <th style="padding: 0.75rem 0.6rem; text-align: right; white-space: nowrap;">Ações</th>
           </tr>
         </thead>
         <tbody id="licensesTableBody">
           <tr>
-            <td colspan="8" style="padding: 2rem; text-align: center; color: var(--text-muted);">Carregando licenças...</td>
+            <td colspan="8" style="padding: 2rem; text-align: center; color: var(--text-muted);">Carregando licenças...
+            </td>
           </tr>
         </tbody>
       </table>
@@ -93,11 +104,14 @@
       <h2 style="font-size: 1.25rem; font-weight: 700; color: #ef4444; display: flex; align-items: center; gap: 8px;">
         Tentativas de Acesso Negado / Ataques Suspeitos
       </h2>
-      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Histórico detalhado de requisições rejeitadas com origem identificada (Painel Web vs Validação API).</p>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Histórico detalhado de requisições
+        rejeitadas com origem identificada (Painel Web vs Validação API).</p>
     </div>
     <div style="display: flex; gap: 8px;">
-      <button onclick="fetchAccessLogs()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">Atualizar Logs</button>
-      <button id="btnClearLogs" onclick="clearAccessLogs()" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;">Limpar Histórico</button>
+      <button onclick="fetchAccessLogs()" class="btn btn-secondary"
+        style="padding: 6px 12px; font-size: 0.8rem;">Atualizar Logs</button>
+      <button id="btnClearLogs" onclick="clearAccessLogs()" class="btn btn-danger"
+        style="padding: 6px 12px; font-size: 0.8rem;">Limpar Histórico</button>
     </div>
   </div>
 
@@ -105,7 +119,8 @@
     <div style="overflow-x: auto;">
       <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
         <thead>
-          <tr style="background-color: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+          <tr
+            style="background-color: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
             <th style="padding: 0.75rem 1rem;">Data / Hora</th>
             <th style="padding: 0.75rem 1rem;">IP do Cliente</th>
             <th style="padding: 0.75rem 1rem;">UUID Tentado</th>
@@ -117,19 +132,23 @@
         </thead>
         <tbody id="logsTableBody">
           <tr>
-            <td colspan="7" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Carregando logs de auditoria...</td>
+            <td colspan="7" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Carregando logs de
+              auditoria...</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <!-- Barra de Paginação para Logs (5 itens por página) -->
-    <div id="logsPagination" style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; border-top: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-muted); background: rgba(255,255,255,0.01);">
+    <div id="logsPagination"
+      style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; border-top: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-muted); background: rgba(255,255,255,0.01);">
       <span id="logsPageInfo">Mostrando 0-0 de 0 tentativas</span>
       <div style="display: flex; gap: 8px; align-items: center;">
-        <button id="btnPrevLogs" onclick="changeLogsPage(-1)" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;">← Anterior</button>
+        <button id="btnPrevLogs" onclick="changeLogsPage(-1)" class="btn btn-secondary"
+          style="padding: 4px 10px; font-size: 0.75rem;">← Anterior</button>
         <span id="logsPageNum" style="font-weight: 600; color: var(--accent-blue);">Página 1 de 1</span>
-        <button id="btnNextLogs" onclick="changeLogsPage(1)" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;">Próximo →</button>
+        <button id="btnNextLogs" onclick="changeLogsPage(1)" class="btn btn-secondary"
+          style="padding: 4px 10px; font-size: 0.75rem;">Próximo →</button>
       </div>
     </div>
   </div>
@@ -140,11 +159,14 @@
       <h2 style="font-size: 1.25rem; font-weight: 700; color: #f59e0b; display: flex; align-items: center; gap: 8px;">
         Blacklist e Histórico de IPs Bloqueados
       </h2>
-      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Registro de bloqueios e desbloqueios com auditoria (Quem bloqueou/desbloqueou e data).</p>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Registro de bloqueios e desbloqueios com
+        auditoria (Quem bloqueou/desbloqueou e data).</p>
     </div>
     <div style="display: flex; gap: 8px;">
-      <button onclick="fetchBlockedIps()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">Atualizar Blacklist</button>
-      <button onclick="openBlockIpModal()" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">+ Bloquear IP Manualmente</button>
+      <button onclick="fetchBlockedIps()" class="btn btn-secondary"
+        style="padding: 6px 12px; font-size: 0.8rem;">Atualizar Blacklist</button>
+      <button onclick="openBlockIpModal()" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">+
+        Bloquear IP Manualmente</button>
     </div>
   </div>
 
@@ -152,7 +174,8 @@
     <div style="overflow-x: auto;">
       <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
         <thead>
-          <tr style="background-color: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+          <tr
+            style="background-color: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
             <th style="padding: 0.75rem 1rem;">Endereço IP</th>
             <th style="padding: 0.75rem 1rem;">Status</th>
             <th style="padding: 0.75rem 1rem;">Motivo do Bloqueio</th>
@@ -163,7 +186,8 @@
         </thead>
         <tbody id="blockedIpsTableBody">
           <tr>
-            <td colspan="6" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Carregando IPs bloqueados...</td>
+            <td colspan="6" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Carregando IPs
+              bloqueados...</td>
           </tr>
         </tbody>
       </table>
@@ -177,14 +201,18 @@
 <div id="tabContentUsers" style="display: none;">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
     <div>
-      <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--accent-blue); display: flex; align-items: center; gap: 8px;">
+      <h2
+        style="font-size: 1.3rem; font-weight: 700; color: var(--accent-blue); display: flex; align-items: center; gap: 8px;">
         👥 Gestão de Usuários e Permissões (RBAC)
       </h2>
-      <p style="color: var(--text-muted); font-size: 0.85rem;">Gerencie os acessos de Administradores, Operadores e Usuários de Consulta do sistema.</p>
+      <p style="color: var(--text-muted); font-size: 0.85rem;">Gerencie os acessos de Administradores, Operadores e
+        Usuários de Consulta do sistema.</p>
     </div>
     <div style="display: flex; gap: 8px;">
-      <button onclick="fetchUsers()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">🔄 Atualizar Usuários</button>
-      <button onclick="openUserModal()" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">+ Novo Usuário</button>
+      <button onclick="fetchUsers()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">🔄
+        Atualizar Usuários</button>
+      <button onclick="openUserModal()" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">+ Novo
+        Usuário</button>
     </div>
   </div>
 
@@ -192,7 +220,8 @@
     <div style="overflow-x: auto;">
       <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
         <thead>
-          <tr style="background-color: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+          <tr
+            style="background-color: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
             <th style="padding: 0.75rem 1rem;">Nome de Visualização</th>
             <th style="padding: 0.75rem 1rem;">E-mail / Login</th>
             <th style="padding: 0.75rem 1rem;">Função / Perfil (Role)</th>
@@ -203,7 +232,8 @@
         </thead>
         <tbody id="usersTableBody">
           <tr>
-            <td colspan="6" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Carregando usuários...</td>
+            <td colspan="6" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">Carregando
+              usuários...</td>
           </tr>
         </tbody>
       </table>
@@ -220,28 +250,36 @@
       <h2 style="font-size: 1.3rem; font-weight: 700; color: #c084fc; display: flex; align-items: center; gap: 8px;">
         Configurações e Políticas Globais do Serviço
       </h2>
-      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Defina diretrizes globais de segurança e autenticação aplicadas a todo o servidor.</p>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Defina diretrizes globais de segurança e
+        autenticação aplicadas a todo o servidor.</p>
     </div>
     <div>
-      <button onclick="fetchSystemSettings()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">Recarregar Configurações</button>
+      <button onclick="fetchSystemSettings()" class="btn btn-secondary"
+        style="padding: 6px 12px; font-size: 0.8rem;">Recarregar Configurações</button>
     </div>
   </div>
 
   <div class="card" style="max-width: 680px; margin-bottom: 2rem;">
     <form id="systemSettingsForm">
-      <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+      <h3
+        style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
         Políticas Globais de Autenticação e MFA (2FA)
       </h3>
 
-      <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.2); padding: 1.25rem; border-radius: 10px; margin-bottom: 1.5rem;">
+      <div
+        style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.2); padding: 1.25rem; border-radius: 10px; margin-bottom: 1.5rem;">
         <div style="display: flex; align-items: flex-start; gap: 12px;">
-          <input type="checkbox" id="settingRequireMfaAll" style="width: 20px; height: 20px; cursor: pointer; margin-top: 2px;">
+          <input type="checkbox" id="settingRequireMfaAll"
+            style="width: 20px; height: 20px; cursor: pointer; margin-top: 2px;">
           <div>
-            <label for="settingRequireMfaAll" style="cursor: pointer; font-size: 0.95rem; font-weight: 700; color: #c084fc; margin-bottom: 4px; display: block;">
+            <label for="settingRequireMfaAll"
+              style="cursor: pointer; font-size: 0.95rem; font-weight: 700; color: #c084fc; margin-bottom: 4px; display: block;">
               Tornar Autenticação em Duas Etapas (MFA) OBRIGATÓRIA para todos os usuários
             </label>
             <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0; line-height: 1.4;">
-              Quando esta política estiver ativada, qualquer usuário (Administrador, Operador ou Usuário de Consulta) sem o MFA ativado em seu perfil será <strong>bloqueado no login</strong> até que regularize sua conta com a autenticação de duas etapas.
+              Quando esta política estiver ativada, qualquer usuário (Administrador, Operador ou Usuário de Consulta)
+              sem o MFA ativado em seu perfil será <strong>bloqueado no login</strong> até que regularize sua conta com
+              a autenticação de duas etapas.
             </p>
           </div>
         </div>
@@ -260,23 +298,61 @@
 <!-- ABA 5: ATUALIZAÇÕES EXECUTÁVEIS (.EXE) -->
 <!-- =================================================================== -->
 <div id="tabContentReleases" style="display: none;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
     <div>
       <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Atualizações Executáveis (.exe)</h2>
-      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Gerenciamento de versões de programas e executáveis distribuídos para clientes.</p>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Gerenciamento de programas e publicação
+        de novas releases executáveis para clientes.</p>
     </div>
     <div style="display: flex; gap: 8px;">
-      <button onclick="fetchReleases()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">Atualizar Lista</button>
-      <button id="btnOpenReleaseModal" onclick="openReleaseModal()" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
-        Nova Release (.exe)
+      <button onclick="fetchReleases()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">🔄
+        Atualizar Lista</button>
+      <button id="btnOpenReleaseModal" onclick="openReleaseModal()" class="btn btn-primary"
+        style="padding: 6px 14px; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+        ➕ Nova Release Geral
       </button>
     </div>
   </div>
 
+  <!-- SEÇÃO DE PROGRAMAS CADASTRADOS COM BOTÕES ESPECÍFICOS DE RELEASE -->
+  <div style="margin-bottom: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+      <h3
+        style="font-size: 1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px; margin: 0;">
+        <span>💻 Programas e Módulos Ativos</span>
+        <span id="programCountBadge"
+          style="background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; font-weight: 600;">0</span>
+      </h3>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">Clique em <strong>+ Nova Release</strong> no card do
+        programa desejado</span>
+    </div>
+    <div id="programCardsGrid"
+      style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem;">
+      <div
+        style="padding: 1.5rem; text-align: center; color: var(--text-muted); background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;">
+        Carregando programas cadastrados...</div>
+    </div>
+  </div>
+
+  <!-- HISTÓRICO DE RELEASES -->
   <div class="card" style="padding: 0; overflow-x: auto;">
+    <div
+      style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: var(--bg-hover);">
+      <h3 style="font-size: 0.95rem; font-weight: 600; color: var(--text-main); margin: 0;">📋 Histórico Completo de
+        Releases</h3>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <label for="filterReleaseApp" style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Filtrar
+          Programa:</label>
+        <select id="filterReleaseApp" onchange="filterReleasesByApp(this.value)"
+          style="padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 0.8rem; cursor: pointer;">
+          <option value="">Todos os Programas</option>
+        </select>
+      </div>
+    </div>
     <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
       <thead>
-        <tr style="background: var(--bg-hover); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+        <tr
+          style="background: var(--bg-hover); border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
           <th style="padding: 12px 16px;">App ID / Nome</th>
           <th style="padding: 12px 16px;">Descrição</th>
           <th style="padding: 12px 16px;">Versão</th>
@@ -290,7 +366,10 @@
         </tr>
       </thead>
       <tbody id="releasesTableBody">
-        <tr><td colspan="10" style="padding: 2rem; text-align: center; color: var(--text-muted);">Carregando releases executáveis...</td></tr>
+        <tr>
+          <td colspan="10" style="padding: 2rem; text-align: center; color: var(--text-muted);">Carregando releases
+            executáveis...</td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -301,21 +380,26 @@
 <!-- =================================================================== -->
 
 <!-- Modal para Adicionar / Editar Licença -->
-<div id="licenseModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
+<div id="licenseModal"
+  style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
   <div class="card" style="width: 100%; max-width: 480px; margin: 0 1rem; position: relative;">
-    <button type="button" onclick="closeModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
+    <button type="button" onclick="closeModal()"
+      style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;"
+      title="Fechar Modal">✕</button>
     <h3 id="modalTitle" style="margin-bottom: 1.25rem;">Nova Licença</h3>
     <form id="licenseForm">
       <input type="hidden" id="editUuid">
-      
+
       <div class="form-group">
         <label>Nome / Identificação do Cliente</label>
         <input type="text" id="company_name" class="form-control" placeholder="Ex: Cliente Empresa XYZ" required>
       </div>
 
       <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px; margin-bottom: 1rem;">
-        <input type="checkbox" id="is_lifetime" style="width: 18px; height: 18px; cursor: pointer;" onchange="toggleLifetime(this.checked)">
-        <label for="is_lifetime" style="cursor: pointer; margin: 0; font-size: 0.95rem; color: var(--accent-blue); font-weight: 600;">
+        <input type="checkbox" id="is_lifetime" style="width: 18px; height: 18px; cursor: pointer;"
+          onchange="toggleLifetime(this.checked)">
+        <label for="is_lifetime"
+          style="cursor: pointer; margin: 0; font-size: 0.95rem; color: var(--accent-blue); font-weight: 600;">
           ♾️ Válido para Sempre (Sem Expiração)
         </label>
       </div>
@@ -342,10 +426,14 @@
 </div>
 
 <!-- Modal para Bloquear IP Manualmente -->
-<div id="blockIpModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
+<div id="blockIpModal"
+  style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
   <div class="card" style="width: 100%; max-width: 440px; margin: 0 1rem; position: relative;">
-    <button type="button" onclick="closeBlockIpModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
-    <h3 style="margin-bottom: 1.25rem; color: #ef4444; display: flex; align-items: center; gap: 8px;">🚫 Bloquear Endereço IP</h3>
+    <button type="button" onclick="closeBlockIpModal()"
+      style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;"
+      title="Fechar Modal">✕</button>
+    <h3 style="margin-bottom: 1.25rem; color: #ef4444; display: flex; align-items: center; gap: 8px;">🚫 Bloquear
+      Endereço IP</h3>
     <form id="blockIpForm">
       <div class="form-group">
         <label>Endereço IP</label>
@@ -353,7 +441,8 @@
       </div>
       <div class="form-group">
         <label>Motivo do Bloqueio</label>
-        <input type="text" id="blockIpReasonInput" class="form-control" placeholder="Ex: Tentativas de ataque ou força bruta" required>
+        <input type="text" id="blockIpReasonInput" class="form-control"
+          placeholder="Ex: Tentativas de ataque ou força bruta" required>
       </div>
       <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem;">
         <button type="button" onclick="closeBlockIpModal()" class="btn btn-secondary">Cancelar</button>
@@ -364,9 +453,12 @@
 </div>
 
 <!-- Modal de Perfil: Alterar Senha & Gerenciar MFA -->
-<div id="passwordModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
+<div id="passwordModal"
+  style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
   <div class="card" style="width: 100%; max-width: 480px; margin: 0 1rem; position: relative;">
-    <button type="button" onclick="closePasswordModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
+    <button type="button" onclick="closePasswordModal()"
+      style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;"
+      title="Fechar Modal">✕</button>
     <h3 style="margin-bottom: 1.25rem;">🔑 Meu Perfil - Senha & MFA</h3>
     <form id="passwordForm">
       <div class="form-group">
@@ -375,24 +467,38 @@
       </div>
       <div class="form-group">
         <label>Nova Senha</label>
-        <input type="password" id="newPassword" class="form-control" placeholder="Digite a nova senha" required oninput="onPasswordInputLive()">
+        <input type="password" id="newPassword" class="form-control" placeholder="Digite a nova senha" required
+          oninput="onPasswordInputLive()">
       </div>
       <div class="form-group" style="margin-bottom: 0.75rem;">
         <label>Confirmação da Nova Senha</label>
-        <input type="password" id="confirmPassword" class="form-control" placeholder="Repita a nova senha" required oninput="onPasswordInputLive()">
+        <input type="password" id="confirmPassword" class="form-control" placeholder="Repita a nova senha" required
+          oninput="onPasswordInputLive()">
       </div>
 
       <!-- Requisitos Dinâmicos em Tempo Real -->
       <div style="margin-bottom: 1.25rem;">
-        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-bottom: 6px;">Requisitos da Senha:</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-bottom: 6px;">Requisitos da
+          Senha:</div>
         <div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.75rem;">
-          <span id="pwd-len" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 8+ caracteres</span>
-          <span id="pwd-upper" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Maiúscula</span>
-          <span id="pwd-lower" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Minúscula</span>
-          <span id="pwd-digit" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Número</span>
-          <span id="pwd-special" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Especial (@#$!)</span>
+          <span id="pwd-len"
+            style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴
+            8+ caracteres</span>
+          <span id="pwd-upper"
+            style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴
+            Maiúscula</span>
+          <span id="pwd-lower"
+            style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴
+            Minúscula</span>
+          <span id="pwd-digit"
+            style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴
+            Número</span>
+          <span id="pwd-special"
+            style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴
+            Especial (@#$!)</span>
         </div>
-        <div id="pwd-match" style="margin-top: 8px; font-size: 0.8rem; font-weight: 600; color: #ef4444; display: none;"></div>
+        <div id="pwd-match"
+          style="margin-top: 8px; font-size: 0.8rem; font-weight: 600; color: #ef4444; display: none;"></div>
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 1.5rem;">
@@ -406,8 +512,10 @@
     <!-- Seção de Gerenciamento de MFA (2FA TOTP) no Perfil -->
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <div>
-        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">📱 Autenticação em Duas Etapas (MFA)</h4>
-        <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">Proteja seu acesso com Google Authenticator ou Authy.</p>
+        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">📱 Autenticação
+          em Duas Etapas (MFA)</h4>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">Proteja seu acesso com Google Authenticator
+          ou Authy.</p>
       </div>
       <div id="mfaProfileBtnContainer">
         <span style="font-size: 0.75rem; color: var(--text-muted);">Carregando status...</span>
@@ -417,24 +525,31 @@
 </div>
 
 <!-- Modal para Configurar MFA (QR Code) -->
-<div id="mfaSetupModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000;">
+<div id="mfaSetupModal"
+  style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000;">
   <div class="card" style="width: 100%; max-width: 440px; margin: 0 1rem; text-align: center; position: relative;">
-    <button type="button" onclick="closeMfaSetupModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
+    <button type="button" onclick="closeMfaSetupModal()"
+      style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;"
+      title="Fechar Modal">✕</button>
     <h3 style="margin-bottom: 1rem; color: var(--accent-blue);">📱 Configurar Autenticação MFA</h3>
-    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">1. Abra o aplicativo <strong>Google Authenticator</strong> ou <strong>Authy</strong> no celular e escaneie o QR Code abaixo:</p>
-    
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">1. Abra o aplicativo <strong>Google
+        Authenticator</strong> ou <strong>Authy</strong> no celular e escaneie o QR Code abaixo:</p>
+
     <div style="background: #fff; padding: 12px; border-radius: 12px; display: inline-block; margin-bottom: 1rem;">
       <img id="mfaQrCodeImg" src="" alt="MFA QR Code" style="width: 180px; height: 180px; display: block;">
     </div>
 
     <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.25rem; word-break: break-all;">
-      Chave Manual: <code id="mfaSecretText" style="color: var(--accent-blue); font-family: monospace; font-weight: 700;"></code>
+      Chave Manual: <code id="mfaSecretText"
+        style="color: var(--accent-blue); font-family: monospace; font-weight: 700;"></code>
     </div>
 
     <form id="mfaEnableForm">
       <div class="form-group" style="text-align: left;">
         <label>2. Digite o código de 6 dígitos gerado no aplicativo para ativar:</label>
-        <input type="text" id="mfaConfirmCode" class="form-control" placeholder="123456" maxlength="6" pattern="[0-9]{6}" required style="text-align: center; letter-spacing: 4px; font-size: 1.2rem; font-weight: 700; font-family: monospace;">
+        <input type="text" id="mfaConfirmCode" class="form-control" placeholder="123456" maxlength="6"
+          pattern="[0-9]{6}" required
+          style="text-align: center; letter-spacing: 4px; font-size: 1.2rem; font-weight: 700; font-family: monospace;">
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.25rem;">
@@ -446,9 +561,12 @@
 </div>
 
 <!-- Modal para Cadastrar Usuário (Apenas Admin) -->
-<div id="userModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
+<div id="userModal"
+  style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
   <div class="card" style="width: 100%; max-width: 460px; margin: 0 1rem; position: relative;">
-    <button type="button" onclick="closeUserModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
+    <button type="button" onclick="closeUserModal()"
+      style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;"
+      title="Fechar Modal">✕</button>
     <h3 style="margin-bottom: 1.25rem;">👥 Cadastrar Novo Usuário</h3>
     <form id="userForm">
       <div class="form-group">
@@ -469,24 +587,38 @@
       </div>
       <div class="form-group">
         <label>Senha de Acesso</label>
-        <input type="password" id="newUserPassword" class="form-control" placeholder="••••••••" required oninput="onUserPasswordInputLive()">
+        <input type="password" id="newUserPassword" class="form-control" placeholder="••••••••" required
+          oninput="onUserPasswordInputLive()">
       </div>
       <div class="form-group" style="margin-bottom: 0.75rem;">
         <label>Confirmar Senha</label>
-        <input type="password" id="newUserConfirmPassword" class="form-control" placeholder="••••••••" required oninput="onUserPasswordInputLive()">
+        <input type="password" id="newUserConfirmPassword" class="form-control" placeholder="••••••••" required
+          oninput="onUserPasswordInputLive()">
       </div>
 
       <!-- Requisitos Dinâmicos em Tempo Real -->
       <div style="margin-bottom: 1.25rem;">
-        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-bottom: 6px;">Requisitos da Senha:</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-bottom: 6px;">Requisitos da
+          Senha:</div>
         <div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.75rem;">
-          <span id="usr-pwd-len" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 8+ caracteres</span>
-          <span id="usr-pwd-upper" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Maiúscula</span>
-          <span id="usr-pwd-lower" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Minúscula</span>
-          <span id="usr-pwd-digit" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Número</span>
-          <span id="usr-pwd-special" style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴 Especial (@#$!)</span>
+          <span id="usr-pwd-len"
+            style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴
+            8+ caracteres</span>
+          <span id="usr-pwd-upper"
+            style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴
+            Maiúscula</span>
+          <span id="usr-pwd-lower"
+            style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴
+            Minúscula</span>
+          <span id="usr-pwd-digit"
+            style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴
+            Número</span>
+          <span id="usr-pwd-special"
+            style="padding: 3px 8px; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 600; transition: all 0.2s;">🔴
+            Especial (@#$!)</span>
         </div>
-        <div id="usr-pwd-match" style="margin-top: 8px; font-size: 0.8rem; font-weight: 600; color: #ef4444; display: none;"></div>
+        <div id="usr-pwd-match"
+          style="margin-top: 8px; font-size: 0.8rem; font-weight: 600; color: #ef4444; display: none;"></div>
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 10px;">
@@ -498,9 +630,12 @@
 </div>
 
 <!-- Modal para Editar Usuário / Resetar Senha / Desativar MFA (Apenas Admin) -->
-<div id="editUserModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
+<div id="editUserModal"
+  style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
   <div class="card" style="width: 100%; max-width: 460px; margin: 0 1rem; position: relative;">
-    <button type="button" onclick="closeEditUserModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
+    <button type="button" onclick="closeEditUserModal()"
+      style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;"
+      title="Fechar Modal">✕</button>
     <h3 style="margin-bottom: 1.25rem;">Editar Usuário</h3>
     <form id="editUserForm">
       <input type="hidden" id="editUserId">
@@ -522,12 +657,15 @@
       </div>
       <div class="form-group">
         <label>Nova Senha (Opcional)</label>
-        <input type="password" id="editUserPassword" class="form-control" placeholder="Deixe em branco para manter a senha atual">
+        <input type="password" id="editUserPassword" class="form-control"
+          placeholder="Deixe em branco para manter a senha atual">
       </div>
 
-      <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px; margin-top: 1rem; margin-bottom: 1rem;">
+      <div class="form-group"
+        style="flex-direction: row; align-items: center; gap: 10px; margin-top: 1rem; margin-bottom: 1rem;">
         <input type="checkbox" id="editResetMfa" style="width: 18px; height: 18px; cursor: pointer;">
-        <label for="editResetMfa" style="cursor: pointer; margin: 0; font-size: 0.85rem; color: #ef4444; font-weight: 600;">
+        <label for="editResetMfa"
+          style="cursor: pointer; margin: 0; font-size: 0.85rem; color: #ef4444; font-weight: 600;">
           Desativar / Resetar Autenticação MFA deste usuário
         </label>
       </div>
@@ -545,54 +683,96 @@
 <!-- =================================================================== -->
 
 <!-- Modal para Cadastrar Nova Release Executável -->
-<div id="modalRelease" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
-  <div class="card" style="width: 100%; max-width: 560px; margin: 0 1rem; position: relative; max-height: 90vh; overflow-y: auto;">
-    <button type="button" onclick="closeReleaseModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;" title="Fechar Modal">✕</button>
-    <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+<div id="modalRelease"
+  style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 999;">
+  <div class="card"
+    style="width: 100%; max-width: 560px; margin: 0 1rem; position: relative; max-height: 90vh; overflow-y: auto;">
+    <button type="button" onclick="closeReleaseModal()"
+      style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1; transition: color 0.2s;"
+      title="Fechar Modal">✕</button>
+    <h3
+      style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
       Cadastrar Nova Release (.exe)
     </h3>
     <form id="releaseForm">
-      <div style="display: flex; gap: 12px; margin-bottom: 1rem;">
-        <div style="flex: 1;">
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Identificador do App (App ID) *</label>
-          <input type="text" id="releaseAppId" required placeholder="Ex: atualizadoNBS ou monitor" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
-        </div>
-        <div style="flex: 1;">
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Nome de Exibição do App *</label>
-          <input type="text" id="releaseAppName" required placeholder="Ex: Atualizador NBS" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
-        </div>
-      </div>
-
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Descrição do Aplicativo (Central Hub)</label>
-        <input type="text" id="releaseAppDescription" placeholder="Ex: Módulo de atualização de cadastros e notas fiscais." style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
+      <div
+        style="margin-bottom: 1rem; background: rgba(59, 130, 246, 0.05); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">
+        <label for="releaseAppSelect"
+          style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--accent-blue); margin-bottom: 4px;">Programa
+          / Aplicativo Destino *</label>
+        <select id="releaseAppSelect" onchange="onReleaseAppSelectChange(this.value)"
+          style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+          <option value="__NEW__">➕ Cadastrar Novo Programa (Digitar App ID...)</option>
+        </select>
       </div>
 
       <div style="display: flex; gap: 12px; margin-bottom: 1rem;">
         <div style="flex: 1;">
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Nome da Versão *</label>
-          <input type="text" id="releaseVersionName" required placeholder="Ex: 1.2.0" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
+          <label
+            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Identificador
+            do App (App ID) *</label>
+          <input type="text" id="releaseAppId" required placeholder="Ex: atualizadoNBS ou monitor"
+            style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
         </div>
         <div style="flex: 1;">
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Código Numérico *</label>
-          <input type="number" id="releaseVersionCode" required placeholder="Ex: 120" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
+          <label
+            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Nome
+            de Exibição do App *</label>
+          <input type="text" id="releaseAppName" required placeholder="Ex: Atualizador NBS"
+            style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
         </div>
       </div>
 
       <div style="margin-bottom: 1rem;">
-        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Arquivo Executável (.exe) *</label>
-        <input type="file" id="releaseFile" accept=".exe" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px dashed var(--accent-blue); background: rgba(59,130,246,0.05); color: var(--text-main); cursor: pointer;">
-        <small style="color: var(--text-muted); font-size: 0.75rem; display: block; margin-top: 4px;">O hash SHA-256 e o tamanho em bytes serão calculados automaticamente no upload.</small>
+        <label
+          style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Descrição
+          do Aplicativo (Central Hub)</label>
+        <input type="text" id="releaseAppDescription"
+          placeholder="Ex: Módulo de atualização de cadastros e notas fiscais."
+          style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-bottom: 1rem;">
+        <div style="flex: 1;">
+          <label
+            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Nome
+            da Versão *</label>
+          <input type="text" id="releaseVersionName" required placeholder="Ex: 1.2.0"
+            style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
+        </div>
+        <div style="flex: 1;">
+          <label
+            style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Código
+            Numérico *</label>
+          <input type="number" id="releaseVersionCode" required placeholder="Ex: 120"
+            style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main);">
+        </div>
       </div>
 
       <div style="margin-bottom: 1rem;">
-        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Notas da Versão (Changelog)</label>
-        <textarea id="releaseNotes" rows="3" placeholder="Descreva as correções de bugs, novos recursos e melhorias desta versão..." style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main); font-family: inherit; font-size: 0.85rem;"></textarea>
+        <label
+          style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Arquivo
+          Executável (.exe) *</label>
+        <input type="file" id="releaseFile" accept=".exe" required
+          style="width: 100%; padding: 8px; border-radius: 6px; border: 1px dashed var(--accent-blue); background: rgba(59,130,246,0.05); color: var(--text-main); cursor: pointer;">
+        <small style="color: var(--text-muted); font-size: 0.75rem; display: block; margin-top: 4px;">O hash SHA-256 e o
+          tamanho em bytes serão calculados automaticamente no upload.</small>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label
+          style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">Notas
+          da Versão (Changelog)</label>
+        <textarea id="releaseNotes" rows="3"
+          placeholder="Descreva as correções de bugs, novos recursos e melhorias desta versão..."
+          style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-hover); color: var(--text-main); font-family: inherit; font-size: 0.85rem;"></textarea>
       </div>
 
       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 1.5rem;">
         <input type="checkbox" id="releaseIsMandatory" style="width: 16px; height: 16px; cursor: pointer;">
-        <label for="releaseIsMandatory" style="font-size: 0.85rem; color: var(--text-main); cursor: pointer;">Atualização Obrigatória (impede execução sem atualizar)</label>
+        <label for="releaseIsMandatory"
+          style="font-size: 0.85rem; color: var(--text-main); cursor: pointer;">Atualização Obrigatória (impede execução
+          sem atualizar)</label>
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 10px;">
@@ -604,19 +784,28 @@
 </div>
 
 <!-- Modal para Configurar Permissões de Apps por Cliente (Entitlements) -->
-<div id="modalEntitlements" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000;">
-  <div class="card" style="width: 100%; max-width: 520px; margin: 0 1rem; position: relative; max-height: 90vh; overflow-y: auto;">
-    <button type="button" onclick="closeEntitlementsModal()" style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1;" title="Fechar Modal">✕</button>
+<div id="modalEntitlements"
+  style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000;">
+  <div class="card"
+    style="width: 100%; max-width: 520px; margin: 0 1rem; position: relative; max-height: 90vh; overflow-y: auto;">
+    <button type="button" onclick="closeEntitlementsModal()"
+      style="position: absolute; top: 16px; right: 18px; background: transparent; border: none; color: var(--text-muted); font-size: 1.25rem; font-weight: 700; cursor: pointer; line-height: 1;"
+      title="Fechar Modal">✕</button>
     <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">
       Softwares Contratados pelo Cliente
     </h3>
-    <p id="entitlementsClientName" style="color: var(--accent-blue); font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;"></p>
+    <p id="entitlementsClientName"
+      style="color: var(--accent-blue); font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+    </p>
 
     <form id="entitlementsForm">
       <input type="hidden" id="entitlementsClientUuid">
       <div style="margin-bottom: 1rem;">
-        <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">Selecione quais programas este cliente tem permissão para instalar no Hub:</label>
-        <div id="entitlementsAppsList" style="background: var(--bg-hover); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+        <label
+          style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">Selecione
+          quais programas este cliente tem permissão para instalar no Hub:</label>
+        <div id="entitlementsAppsList"
+          style="background: var(--bg-hover); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
           <!-- Lista carregada via JS -->
         </div>
       </div>
@@ -898,7 +1087,7 @@
         const displayName = u.name || u.username;
         const userEmail = u.email || u.username;
 
-        let mfaBadge = Number(u.mfa_enabled) === 1 
+        let mfaBadge = Number(u.mfa_enabled) === 1
           ? '<span style="background: rgba(34, 197, 94, 0.15); color: var(--accent-green); padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">MFA Ativo</span>'
           : '<span style="background: rgba(156, 163, 175, 0.15); color: var(--text-muted); padding: 3px 8px; border-radius: 6px; font-size: 0.75rem;">Inativo</span>';
 
@@ -1254,17 +1443,17 @@
         let actionBtns = '';
         if (loggedRole === 'admin') {
           actionBtns = `
-            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px; flex-wrap: nowrap;">
-              <button onclick="openEntitlementsModal('${lic.uuid}', '${escapeHtml(lic.company_name)}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" title="Configurar softwares contratados pelo cliente no Hub">Apps</button>
-              <button onclick="openEditModal('${lic.uuid}', '${escapeHtml(lic.company_name)}', '${lic.valid_until}', ${isLifetime ? 'true' : 'false'}, '${lic.status || 'active'}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">Editar</button>
-              <button onclick="deleteLicense('${lic.uuid}')" class="btn btn-danger" style="padding: 4px 10px; font-size: 0.8rem;">Excluir</button>
+            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 4px; flex-wrap: nowrap;">
+              <button onclick="openEntitlementsModal('${lic.uuid}', '${escapeHtml(lic.company_name)}')" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" title="Configurar softwares contratados pelo cliente no Hub">Apps</button>
+              <button onclick="openEditModal('${lic.uuid}', '${escapeHtml(lic.company_name)}', '${lic.valid_until}', ${isLifetime ? 'true' : 'false'}, '${lic.status || 'active'}')" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;">Editar</button>
+              <button onclick="deleteLicense('${lic.uuid}')" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;">Excluir</button>
             </div>
           `;
         } else if (loggedRole === 'operator') {
           actionBtns = `
-            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px; flex-wrap: nowrap;">
-              <button onclick="openEntitlementsModal('${lic.uuid}', '${escapeHtml(lic.company_name)}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" title="Configurar softwares contratados pelo cliente no Hub">Apps</button>
-              <button onclick="openEditModal('${lic.uuid}', '${escapeHtml(lic.company_name)}', '${lic.valid_until}', ${isLifetime ? 'true' : 'false'}, '${lic.status || 'active'}')" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">Editar</button>
+            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 4px; flex-wrap: nowrap;">
+              <button onclick="openEntitlementsModal('${lic.uuid}', '${escapeHtml(lic.company_name)}')" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" title="Configurar softwares contratados pelo cliente no Hub">Apps</button>
+              <button onclick="openEditModal('${lic.uuid}', '${escapeHtml(lic.company_name)}', '${lic.valid_until}', ${isLifetime ? 'true' : 'false'}, '${lic.status || 'active'}')" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;">Editar</button>
             </div>
           `;
         } else {
@@ -1273,26 +1462,26 @@
 
         return `
           <tr style="border-bottom: 1px solid var(--border-color);">
-            <td style="padding: 1rem;">
-              <strong style="color: var(--text-main); font-size: 0.95rem;">${escapeHtml(lic.company_name)}</strong>
+            <td style="padding: 0.65rem 0.6rem;">
+              <strong style="color: var(--text-main); font-size: 0.88rem;">${escapeHtml(lic.company_name)}</strong>
             </td>
-            <td style="padding: 1rem;">
+            <td style="padding: 0.65rem 0.6rem;">
               <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
-                <code style="background: var(--bg-input); padding: 4px 8px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; color: var(--accent-blue); font-weight: 600; letter-spacing: 1px;">••••••••-••••-••••</code>
+                <code style="background: var(--bg-input); padding: 3px 6px; border-radius: 6px; font-family: monospace; font-size: 0.8rem; color: var(--accent-blue); font-weight: 600; letter-spacing: 0.5px;">••••••••••••••••</code>
                 <button onclick="copyToClipboard('${lic.uuid}', 'UUID copiado!')" class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.7rem; white-space: nowrap;" title="Copiar UUID Completo">Copiar</button>
               </div>
             </td>
-            <td style="padding: 1rem;">
+            <td style="padding: 0.65rem 0.6rem;">
               <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
-                <code style="background: var(--bg-input); padding: 4px 8px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; color: #cbd5e1; font-weight: 600; letter-spacing: 1px;">••••••••••••••••</code>
+                <code style="background: var(--bg-input); padding: 3px 6px; border-radius: 6px; font-family: monospace; font-size: 0.8rem; color: #cbd5e1; font-weight: 600; letter-spacing: 0.5px;">••••••••••••••••</code>
                 <button onclick="copyToClipboard('${lic.api_key || ''}', 'X-API-Key copiada!')" class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.7rem; white-space: nowrap;" title="Copiar Key Completa">Copiar Key</button>
               </div>
             </td>
-            <td style="padding: 1rem;">${hwidDisplay}</td>
-            <td style="padding: 1rem;">${statusBadge}</td>
-            <td style="padding: 1rem; color: var(--text-muted);">${dateDisplay}</td>
-            <td style="padding: 1rem; color: var(--text-muted); font-size: 0.85rem;"><span style="color: var(--accent-blue); font-weight: 600;">${escapeHtml(lic.created_by || 'Sistema')}</span></td>
-            <td style="padding: 1rem; text-align: right;">${actionBtns}</td>
+            <td style="padding: 0.65rem 0.6rem;">${hwidDisplay}</td>
+            <td style="padding: 0.65rem 0.6rem;">${statusBadge}</td>
+            <td style="padding: 0.65rem 0.6rem; color: var(--text-muted); font-size: 0.82rem;">${dateDisplay}</td>
+            <td style="padding: 0.65rem 0.6rem; color: var(--text-muted); font-size: 0.82rem;"><span style="color: var(--accent-blue); font-weight: 600;">${escapeHtml(lic.created_by || 'Sistema')}</span></td>
+            <td style="padding: 0.65rem 0.6rem; text-align: right; white-space: nowrap;">${actionBtns}</td>
           </tr>
         `;
       }).join('');
@@ -1369,7 +1558,7 @@
     e.preventDefault();
     const uuid = document.getElementById('editUuid').value;
     const isLifetime = document.getElementById('is_lifetime').checked;
-    
+
     const payload = {
       company_name: document.getElementById('company_name').value,
       is_lifetime: isLifetime,
@@ -1508,7 +1697,7 @@
         <tr style="border-bottom: 1px solid var(--border-color);">
           <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.8rem;">${new Date(log.created_at).toLocaleString('pt-BR')}</td>
           <td style="padding: 0.75rem 1rem;"><code style="color: var(--accent-yellow); font-family: monospace; font-weight: 600;">${escapeHtml(log.ip)}</code></td>
-          <td style="padding: 0.75rem 1rem;"><code style="color: var(--accent-blue); font-family: monospace;">••••••••-••••-••••</code></td>
+          <td style="padding: 0.75rem 1rem;"><code style="color: var(--accent-blue); font-family: monospace;">••••••••••••••••</code></td>
           <td style="padding: 0.75rem 1rem;"><code style="color: #cbd5e1; font-family: monospace;">••••••••••••••••</code></td>
           <td style="padding: 0.75rem 1rem;">
             ${originBadge}
@@ -1673,75 +1862,236 @@
   /* GERENCIAMENTO DE RELEASES EXECUTÁVEIS (.EXE) */
   /* =================================================================== */
 
+  let allLoadedReleases = [];
+  let registeredAppsMap = new Map();
+
   async function fetchReleases() {
     try {
       const res = await fetch('/api/admin/releases', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
-      const tbody = document.getElementById('releasesTableBody');
+      allLoadedReleases = data.releases || [];
 
-      if (!data.releases || data.releases.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" style="padding: 2rem; text-align: center; color: var(--text-muted);">Nenhuma release (.exe) cadastrada até o momento.</td></tr>`;
-        return;
+      // Mapear programas únicos e suas releases
+      registeredAppsMap.clear();
+      for (const rel of allLoadedReleases) {
+        if (!registeredAppsMap.has(rel.app_id)) {
+          registeredAppsMap.set(rel.app_id, {
+            app_id: rel.app_id,
+            name: rel.name || rel.app_id,
+            description: rel.description || '',
+            releasesCount: 0,
+            latestVersion: rel.version_name,
+            latestCode: Number(rel.version_code) || 0
+          });
+        }
+        const appEntry = registeredAppsMap.get(rel.app_id);
+        appEntry.releasesCount++;
+        if (Number(rel.version_code) > appEntry.latestCode) {
+          appEntry.latestCode = Number(rel.version_code);
+          appEntry.latestVersion = rel.version_name;
+        }
       }
 
-      tbody.innerHTML = data.releases.map(rel => {
-        const isActive = Number(rel.is_active) === 1;
-        const isMandatory = Number(rel.is_mandatory) === 1;
+      // Renderizar Badge e Cards de Programas Cadastrados
+      const programCountBadge = document.getElementById('programCountBadge');
+      if (programCountBadge) programCountBadge.textContent = registeredAppsMap.size;
 
-        const sizeMb = (rel.file_size_bytes / (1024 * 1024)).toFixed(2) + ' MB';
-        const hashShort = rel.sha256_hash ? rel.sha256_hash.substring(0, 12) + '...' : '-';
+      renderProgramCards();
 
-        const statusBadge = isActive
-          ? '<span style="background: rgba(34, 197, 94, 0.15); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Ativa</span>'
-          : '<span style="background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Inativa</span>';
+      // Atualizar Dropdowns de Seleção no Modal e Filtro
+      updateReleaseAppDropdowns();
 
-        const mandatoryBadge = isMandatory
-          ? '<span style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Sim</span>'
-          : '<span style="color: var(--text-muted); font-size: 0.8rem;">Não</span>';
-
-        let actionBtns = '';
-        if (loggedRole === 'admin' || loggedRole === 'operator') {
-          const toggleText = isActive ? 'Desativar' : 'Ativar';
-          const toggleClass = isActive ? 'btn-secondary' : 'btn-primary';
-          actionBtns += `<button onclick="toggleReleaseAction('${rel.id}')" class="btn ${toggleClass}" style="padding: 4px 8px; font-size: 0.75rem;">${toggleText}</button> `;
-        }
-        if (loggedRole === 'admin') {
-          actionBtns += `<button onclick="deleteReleaseAction('${rel.id}')" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;">Excluir</button>`;
-        }
-
-        const formattedDate = new Date(rel.created_at).toLocaleString('pt-BR');
-        const appNameDisplay = rel.name ? `${escapeHtml(rel.name)} <br><small style="color: var(--text-muted); font-size: 0.75rem;">ID: ${escapeHtml(rel.app_id)}</small>` : escapeHtml(rel.app_id);
-        const descriptionDisplay = rel.description ? escapeHtml(rel.description) : '-';
-
-        return `
-          <tr style="border-bottom: 1px solid var(--border-color);">
-            <td style="padding: 0.75rem 1rem;"><strong style="color: var(--text-main); font-size: 0.85rem;">${appNameDisplay}</strong></td>
-            <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.8rem; max-width: 200px;">${descriptionDisplay}</td>
-            <td style="padding: 0.75rem 1rem;"><code style="color: var(--accent-blue); font-weight: 700; font-size: 0.85rem;">v${escapeHtml(rel.version_name)}</code></td>
-            <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.85rem;">${rel.version_code}</td>
-            <td style="padding: 0.75rem 1rem; color: var(--text-main); font-size: 0.85rem;">${sizeMb}</td>
-            <td style="padding: 0.75rem 1rem;"><code style="color: var(--text-muted); font-size: 0.75rem;" title="${escapeHtml(rel.sha256_hash)}">${hashShort}</code></td>
-            <td style="padding: 0.75rem 1rem;">${mandatoryBadge}</td>
-            <td style="padding: 0.75rem 1rem;">${statusBadge}</td>
-            <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.75rem;">${formattedDate}</td>
-            <td style="padding: 0.75rem 1rem; text-align: center;">
-              <div style="display: flex; justify-content: center; gap: 4px;">
-                ${actionBtns || '<span style="color: var(--text-muted); font-size: 0.75rem;">-</span>'}
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
+      // Renderizar Tabela de Releases
+      const currentFilter = document.getElementById('filterReleaseApp')?.value || '';
+      filterReleasesByApp(currentFilter);
     } catch (err) {
       console.error('Erro ao buscar releases:', err);
     }
   }
 
-  function openReleaseModal() {
+  function renderProgramCards() {
+    const grid = document.getElementById('programCardsGrid');
+    if (!grid) return;
+
+    if (registeredAppsMap.size === 0) {
+      grid.innerHTML = `
+        <div style="grid-column: 1 / -1; padding: 2rem; text-align: center; color: var(--text-muted); background: var(--card-bg); border: 1px dashed var(--border-color); border-radius: 8px;">
+          Nenhum programa ou módulo cadastrado. Clique no botão <strong>+ Nova Release Geral</strong> no topo para cadastrar a primeira versão do seu executável.
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = Array.from(registeredAppsMap.values()).map(app => {
+      const isOperatorOrAdmin = loggedRole === 'admin' || loggedRole === 'operator';
+      const actionBtn = isOperatorOrAdmin
+        ? `<button onclick="openReleaseModal('${escapeHtml(app.app_id)}')" class="btn btn-primary" style="padding: 7px 12px; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; font-weight: 600; border-radius: 6px;">
+             ➕ Nova Release para este Programa
+           </button>`
+        : `<span style="font-size: 0.75rem; color: var(--text-muted); display: block; text-align: center;">Somente leitura</span>`;
+
+      return `
+        <div class="card" style="padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; position: relative; border-left: 4px solid var(--accent-blue);">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin: 0;">${escapeHtml(app.name)}</h4>
+              <span style="background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); padding: 2px 8px; border-radius: 4px; font-family: monospace; font-size: 0.75rem; font-weight: 600;">
+                ${escapeHtml(app.app_id)}
+              </span>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+              ${escapeHtml(app.description) || 'Sem descrição cadastrada.'}
+            </p>
+            <div style="display: flex; gap: 10px; margin-bottom: 1.25rem; font-size: 0.75rem;">
+              <div style="background: var(--bg-hover); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-color);">
+                <span style="color: var(--text-muted);">Última Versão:</span> <strong style="color: var(--accent-green);">v${escapeHtml(app.latestVersion)}</strong>
+              </div>
+              <div style="background: var(--bg-hover); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-color);">
+                <span style="color: var(--text-muted);">Releases:</span> <strong style="color: var(--text-main);">${app.releasesCount}</strong>
+              </div>
+            </div>
+          </div>
+          <div>
+            ${actionBtn}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function updateReleaseAppDropdowns() {
+    const appSelect = document.getElementById('releaseAppSelect');
+    const filterSelect = document.getElementById('filterReleaseApp');
+
+    if (appSelect) {
+      let optionsHtml = `<option value="__NEW__">➕ Cadastrar Novo Programa (Digitar App ID...)</option>`;
+      registeredAppsMap.forEach(app => {
+        optionsHtml += `<option value="${escapeHtml(app.app_id)}">📱 ${escapeHtml(app.name)} (${escapeHtml(app.app_id)})</option>`;
+      });
+      appSelect.innerHTML = optionsHtml;
+    }
+
+    if (filterSelect) {
+      const currentFilter = filterSelect.value;
+      let optionsHtml = `<option value="">Todos os Programas (${registeredAppsMap.size})</option>`;
+      registeredAppsMap.forEach(app => {
+        optionsHtml += `<option value="${escapeHtml(app.app_id)}">${escapeHtml(app.name)} (${escapeHtml(app.app_id)})</option>`;
+      });
+      filterSelect.innerHTML = optionsHtml;
+      filterSelect.value = currentFilter;
+    }
+  }
+
+  function onReleaseAppSelectChange(selectedAppId) {
+    const appIdInput = document.getElementById('releaseAppId');
+    const appNameInput = document.getElementById('releaseAppName');
+    const appDescInput = document.getElementById('releaseAppDescription');
+    const versionCodeInput = document.getElementById('releaseVersionCode');
+    const versionNameInput = document.getElementById('releaseVersionName');
+
+    if (selectedAppId === '__NEW__' || !registeredAppsMap.has(selectedAppId)) {
+      appIdInput.value = '';
+      appNameInput.value = '';
+      appDescInput.value = '';
+      versionCodeInput.value = '';
+      versionNameInput.value = '';
+      appIdInput.readOnly = false;
+      appNameInput.readOnly = false;
+      appDescInput.readOnly = false;
+    } else {
+      const app = registeredAppsMap.get(selectedAppId);
+      appIdInput.value = app.app_id;
+      appNameInput.value = app.name;
+      appDescInput.value = app.description;
+
+      // Travar ou deixar somente leitura para garantir consistência
+      appIdInput.readOnly = false;
+      appNameInput.readOnly = false;
+      appDescInput.readOnly = false;
+
+      // Sugerir o próximo version_code
+      if (app.latestCode > 0) {
+        versionCodeInput.value = app.latestCode + 1;
+      }
+    }
+  }
+
+  function filterReleasesByApp(appId) {
+    const tbody = document.getElementById('releasesTableBody');
+    if (!tbody) return;
+
+    const list = appId ? allLoadedReleases.filter(r => r.app_id === appId) : allLoadedReleases;
+
+    if (list.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="10" style="padding: 2rem; text-align: center; color: var(--text-muted);">Nenhuma release encontrada para o filtro selecionado.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = list.map(rel => {
+      const isActive = Number(rel.is_active) === 1;
+      const isMandatory = Number(rel.is_mandatory) === 1;
+
+      const sizeMb = (rel.file_size_bytes / (1024 * 1024)).toFixed(2) + ' MB';
+      const hashShort = rel.sha256_hash ? rel.sha256_hash.substring(0, 12) + '...' : '-';
+
+      const statusBadge = isActive
+        ? '<span style="background: rgba(34, 197, 94, 0.15); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Ativa</span>'
+        : '<span style="background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Inativa</span>';
+
+      const mandatoryBadge = isMandatory
+        ? '<span style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Sim</span>'
+        : '<span style="color: var(--text-muted); font-size: 0.8rem;">Não</span>';
+
+      let actionBtns = '';
+      if (loggedRole === 'admin' || loggedRole === 'operator') {
+        const toggleText = isActive ? 'Desativar' : 'Ativar';
+        const toggleClass = isActive ? 'btn-secondary' : 'btn-primary';
+        actionBtns += `<button onclick="toggleReleaseAction('${rel.id}')" class="btn ${toggleClass}" style="padding: 4px 8px; font-size: 0.75rem;">${toggleText}</button> `;
+      }
+      if (loggedRole === 'admin') {
+        actionBtns += `<button onclick="deleteReleaseAction('${rel.id}')" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;">Excluir</button>`;
+      }
+
+      const formattedDate = new Date(rel.created_at).toLocaleString('pt-BR');
+      const appNameDisplay = rel.name ? `${escapeHtml(rel.name)} <br><small style="color: var(--text-muted); font-size: 0.75rem;">ID: ${escapeHtml(rel.app_id)}</small>` : escapeHtml(rel.app_id);
+      const descriptionDisplay = rel.description ? escapeHtml(rel.description) : '-';
+
+      return `
+        <tr style="border-bottom: 1px solid var(--border-color);">
+          <td style="padding: 0.75rem 1rem;"><strong style="color: var(--text-main); font-size: 0.85rem;">${appNameDisplay}</strong></td>
+          <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.8rem; max-width: 200px;">${descriptionDisplay}</td>
+          <td style="padding: 0.75rem 1rem;"><code style="color: var(--accent-blue); font-weight: 700; font-size: 0.85rem;">v${escapeHtml(rel.version_name)}</code></td>
+          <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.85rem;">${rel.version_code}</td>
+          <td style="padding: 0.75rem 1rem; color: var(--text-main); font-size: 0.85rem;">${sizeMb}</td>
+          <td style="padding: 0.75rem 1rem;"><code style="color: var(--text-muted); font-size: 0.75rem;" title="${escapeHtml(rel.sha256_hash)}">${hashShort}</code></td>
+          <td style="padding: 0.75rem 1rem;">${mandatoryBadge}</td>
+          <td style="padding: 0.75rem 1rem;">${statusBadge}</td>
+          <td style="padding: 0.75rem 1rem; color: var(--text-muted); font-size: 0.75rem;">${formattedDate}</td>
+          <td style="padding: 0.75rem 1rem; text-align: center;">
+            <div style="display: flex; justify-content: center; gap: 4px;">
+              ${actionBtns || '<span style="color: var(--text-muted); font-size: 0.75rem;">-</span>'}
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function openReleaseModal(preselectedAppId) {
     if (loggedRole === 'user') return;
     document.getElementById('releaseForm').reset();
+
+    const appSelect = document.getElementById('releaseAppSelect');
+    if (preselectedAppId && registeredAppsMap.has(preselectedAppId)) {
+      appSelect.value = preselectedAppId;
+      onReleaseAppSelectChange(preselectedAppId);
+    } else {
+      appSelect.value = '__NEW__';
+      onReleaseAppSelectChange('__NEW__');
+    }
+
     document.getElementById('modalRelease').style.display = 'flex';
   }
 
