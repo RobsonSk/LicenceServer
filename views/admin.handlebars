@@ -1883,7 +1883,8 @@
             description: rel.description || '',
             releasesCount: 0,
             latestVersion: rel.version_name,
-            latestCode: Number(rel.version_code) || 0
+            latestCode: Number(rel.version_code) || 0,
+            latestId: rel.id
           });
         }
         const appEntry = registeredAppsMap.get(rel.app_id);
@@ -1891,6 +1892,7 @@
         if (Number(rel.version_code) > appEntry.latestCode) {
           appEntry.latestCode = Number(rel.version_code);
           appEntry.latestVersion = rel.version_name;
+          appEntry.latestId = rel.id;
         }
       }
 
@@ -1932,6 +1934,12 @@
            </button>`
         : `<span style="font-size: 0.75rem; color: var(--text-muted); display: block; text-align: center;">Somente leitura</span>`;
 
+      const downloadLatestBtn = app.latestId
+        ? `<button onclick="downloadReleaseAction('${app.latestId}')" class="btn btn-secondary" style="padding: 7px 12px; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; font-weight: 600; border-radius: 6px; margin-top: 6px;">
+             Baixar Última Versão
+           </button>`
+        : '';
+
       return `
         <div class="card" style="padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; position: relative; border-left: 4px solid var(--accent-blue);">
           <div>
@@ -1955,6 +1963,7 @@
           </div>
           <div>
             ${actionBtn}
+            ${downloadLatestBtn}
           </div>
         </div>
       `;
@@ -2044,7 +2053,7 @@
         ? '<span style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">Sim</span>'
         : '<span style="color: var(--text-muted); font-size: 0.8rem;">Não</span>';
 
-      let actionBtns = '';
+      let actionBtns = `<button onclick="downloadReleaseAction('${rel.id}')" class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;">Baixar</button> `;
       if (loggedRole === 'admin' || loggedRole === 'operator') {
         const toggleText = isActive ? 'Desativar' : 'Ativar';
         const toggleClass = isActive ? 'btn-secondary' : 'btn-primary';
@@ -2077,6 +2086,12 @@
         </tr>
       `;
     }).join('');
+  }
+
+  function downloadReleaseAction(id) {
+    if (!id) return;
+    const downloadUrl = `/api/admin/releases/${id}/download?token=${encodeURIComponent(token)}`;
+    window.open(downloadUrl, '_blank');
   }
 
   function openReleaseModal(preselectedAppId) {

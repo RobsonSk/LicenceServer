@@ -1231,6 +1231,33 @@ router.delete('/api/admin/releases/:id', authenticateAdminToken, requireRole(['a
   }
 });
 
+// Download de release (.exe) pelo Painel de Administração (Admin, Operador, Usuário)
+router.get('/api/admin/releases/:id/download', authenticateAdminToken, requireRole(['admin', 'operator', 'user']), async (req, res) => {
+  const { id } = req.params;
+  try {
+    const release = await getReleaseById(id);
+    if (!release || !fs.existsSync(release.file_path)) {
+      return res.status(404).json({ success: false, error: 'Arquivo do executável não encontrado no servidor.' });
+    }
+
+    const filename = `${release.app_id}-v${release.version_name}.exe`;
+
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Length', release.file_size_bytes);
+    res.setHeader('X-SHA256-Checksum', release.sha256_hash);
+    res.setHeader('Cache-Control', 'no-cache, private');
+
+    const readStream = fs.createReadStream(release.file_path);
+    readStream.pipe(res);
+  } catch (error) {
+    console.error('Erro ao baixar release no painel admin:', error);
+    if (!res.headersSent) {
+      return res.status(500).json({ success: false, error: 'Erro interno ao realizar download do arquivo.' });
+    }
+  }
+});
+
 /**
  * ===================================================================
  *  GERENCIAMENTO DE PERMISSÕES DE APPS POR CLIENTE (ENTITLEMENTS)
